@@ -1,5 +1,13 @@
 # Template for backend course
 
+### install dependencies
+
+```
+pipenv sync
+```
+
+### create .env
+
 ### start web
 
 ```sh
@@ -11,4 +19,3 @@ make dev
 ```sh
 make bot
 ```
-

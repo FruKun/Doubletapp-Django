@@ -11,6 +11,7 @@ from telegram.ext import (
 
 from app.internal.transport.bot.handlers import (
     command_me_handler,
+    command_me_link_handler,
     command_set_phone_handler,
     command_start_handler,
     message_handler,
@@ -28,6 +29,7 @@ def run_bot() -> None:
     application.add_handler(CommandHandler("start", command_start_handler))
     application.add_handler(CommandHandler("set_phone", command_set_phone_handler))
     application.add_handler(CommandHandler("me", command_me_handler))
+    application.add_handler(CommandHandler("get_me_link", command_me_link_handler))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handler))
 
     application.run_polling(allowed_updates=Update.ALL_TYPES)

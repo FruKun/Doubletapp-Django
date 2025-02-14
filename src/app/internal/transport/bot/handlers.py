@@ -42,7 +42,7 @@ async def command_set_phone_handler(update: Update, context: ContextTypes.DEFAUL
 async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """message handler"""
     if state[update.message.from_user.id] == "set_phone":
-        state[update.message.from_user.id] == "default"
+        state[update.message.from_user.id] = "default"
         try:
             await set_phone(update.message.from_user.id, update.message.text, update.message.from_user.language_code)
             await update.message.reply_text("Done")
@@ -53,12 +53,12 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         except UserData.DoesNotExist:
             await update.message.reply_text("Before, you need write command /start")
     else:
-        await update.message.reply_text("echo: " + update.message.text)
+        await update.message.reply_text("I dont know this command")
 
 
 async def command_me_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/me"""
-    state[update.message.from_user.id] == "default"
+    state[update.message.from_user.id] = "default"
     try:
         user = await get_user(update.message.from_user.id)
         if user.phone_number is None:
@@ -73,9 +73,18 @@ async def command_me_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 + str(user.username)
                 + "\n"
                 + str(user.phone_number)
+                + "\n"
+                + "u can use /get_me_link"
             )
     except UserData.DoesNotExist:
         await save_user(
             update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username
         )
         await update.message.reply_text("Bot dont have information about u\nBefore u need set phone /set_phone")
+
+
+async def command_me_link_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/get_me_link"""
+    state[update.message.from_user.id] = "default"
+    user_id = update.message.from_user.id
+    await update.message.reply_text(f"http://127.0.0.1:8000/api/get_user?user_id={user_id}")
