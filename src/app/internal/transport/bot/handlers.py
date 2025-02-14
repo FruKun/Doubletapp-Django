@@ -13,7 +13,9 @@ async def command_start_handler(update: Update, context: ContextTypes.DEFAULT_TY
     """/start"""
     state[update.message.from_user.id] = "default"
     await save_user(update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username)
-    await update.message.reply_text("Hello! You can send me your phone with command /set_phone")
+    await update.message.reply_text(
+        "Hello! You can send me your phone with command /set_phone\nOr get me phone number inline /set_phone +78005553535"
+    )
 
 
 async def command_set_phone_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -51,7 +53,10 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 "try again\nAfter writing command /set_phone\nWrite you phone number\nExample: +78005553535"
             )
         except UserData.DoesNotExist:
-            await update.message.reply_text("Before, you need write command /start")
+            await save_user(
+                update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username
+            )
+            await update.message.reply_text("Try again /set_phone")
     else:
         await update.message.reply_text("I dont know this command")
 

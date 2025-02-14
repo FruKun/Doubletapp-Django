@@ -24,8 +24,19 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
+async def post_init(application: Application) -> None:
+    await application.bot.set_my_commands(
+        [
+            ("start", "Starts the bot"),
+            ("set_phone", "set phone"),
+            ("me", "get info"),
+            ("get_me_link", "get url for info"),
+        ]
+    )
+
+
 def run_bot() -> None:
-    application = Application.builder().token(settings.TOKEN).build()
+    application = Application.builder().token(settings.TOKEN).post_init(post_init).build()
     application.add_handler(CommandHandler("start", command_start_handler))
     application.add_handler(CommandHandler("set_phone", command_set_phone_handler))
     application.add_handler(CommandHandler("me", command_me_handler))
