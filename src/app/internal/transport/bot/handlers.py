@@ -18,9 +18,25 @@ async def command_start_handler(update: Update, context: ContextTypes.DEFAULT_TY
 
 async def command_set_phone_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/set_phone"""
-    state[update.message.from_user.id] = "set_phone"
     await save_user(update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username)
-    await update.message.reply_text("write u number below\nExample: +78005553535")
+    if not context.args:
+        try:
+            await set_phone(
+                update.message.from_user.id, update.message.contact.phone_number, update.message.from_user.language_code
+            )
+            state[update.message.from_user.id] = "default"
+            await update.message.reply_text("U set phone number: " + update.message.contact)
+        except (NumberParseException, AttributeError):
+            state[update.message.from_user.id] = "set_phone"
+            await update.message.reply_text("write u number below\nExample: +78005553535")
+    else:
+        try:
+            await set_phone(update.message.from_user.id, context.args[0], update.message.from_user.language_code)
+            state[update.message.from_user.id] = "default"
+            await update.message.reply_text("Done")
+        except NumberParseException:
+            state[update.message.from_user.id] = "set_phone"
+            await update.message.reply_text("Error\nwrite u number below\nExample: +78005553535")
 
 
 async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
