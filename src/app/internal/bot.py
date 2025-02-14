@@ -30,7 +30,7 @@ async def post_init(application: Application) -> None:
             ("start", "Starts the bot"),
             ("set_phone", "set phone"),
             ("me", "get info"),
-            ("get_me_link", "get url for info"),
+            ("give_me_link", "get url for info"),
         ]
     )
 
@@ -40,7 +40,7 @@ def run_bot() -> None:
     application.add_handler(CommandHandler("start", command_start_handler))
     application.add_handler(CommandHandler("set_phone", command_set_phone_handler))
     application.add_handler(CommandHandler("me", command_me_handler))
-    application.add_handler(CommandHandler("get_me_link", command_me_link_handler))
+    application.add_handler(CommandHandler("give_me_link", command_me_link_handler))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handler))
 
     application.run_polling(allowed_updates=Update.ALL_TYPES)

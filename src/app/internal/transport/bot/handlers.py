@@ -14,7 +14,7 @@ async def command_start_handler(update: Update, context: ContextTypes.DEFAULT_TY
     state[update.message.from_user.id] = "default"
     await save_user(update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username)
     await update.message.reply_text(
-        "Hello! You can send me your phone with command /set_phone\nOr get me phone number inline /set_phone +78005553535"
+        "Hello! You can send me your phone with command /set_phone\nOr give me phone number in line /set_phone +78005553535"
     )
 
 
@@ -79,7 +79,7 @@ async def command_me_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 + "\n"
                 + str(user.phone_number)
                 + "\n"
-                + "u can use /get_me_link"
+                + "u can use /give_me_link"
             )
     except UserData.DoesNotExist:
         await save_user(
@@ -89,7 +89,7 @@ async def command_me_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 
 async def command_me_link_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """/get_me_link"""
+    """/give_me_link"""
     state[update.message.from_user.id] = "default"
     user_id = update.message.from_user.id
     await update.message.reply_text(f"http://127.0.0.1:8000/api/get_user?user_id={user_id}")
