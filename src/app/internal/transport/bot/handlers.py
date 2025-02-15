@@ -71,14 +71,9 @@ async def command_me_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
         else:
             await update.message.reply_text(
                 "its u:\n"
-                # + str(user.id)
-                # + "\n"
-                + str(user.full_name)
-                + "\n"
-                + str(user.username)
-                + "\n"
-                + str(user.phone_number)
-                + "\n"
+                + f"full name: {str(user.full_name)}\n"
+                + f"username: {str(user.username)}\n"
+                + f"phone number: {str(user.phone_number)}\n"
                 + "u can use /give_me_link"
             )
     except UserData.DoesNotExist:
@@ -90,6 +85,17 @@ async def command_me_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 async def command_me_link_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/give_me_link"""
-    state[update.message.from_user.id] = "default"
     user_id = update.message.from_user.id
-    await update.message.reply_text(f"http://127.0.0.1:8000/api/get_user?user_id={user_id}")
+    state[user_id] = "default"
+    try:
+        user = await get_user(user_id)
+        if user.phone_number is None:
+            await update.message.reply_text("u need set phone /set_phone")
+        else:
+            await update.message.reply_text(f"http://127.0.0.1:8000/api/get_user?user_id={user_id}")
+
+    except UserData.DoesNotExist:
+        await save_user(
+            update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username
+        )
+        await update.message.reply_text("Bot dont have information about u\nBefore u need set phone /set_phone")
