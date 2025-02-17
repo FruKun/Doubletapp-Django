@@ -2,6 +2,9 @@ from phonenumbers import NumberParseException, format_out_of_country_calling_num
 
 from app.internal.models.user_data import UserData
 
+# control the bot status for each user. maybe need add cache or another storage method
+state = {}
+
 
 async def get_user(chat_id) -> UserData:
     return await UserData.objects.aget(id=chat_id)
