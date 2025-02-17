@@ -4,13 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+black = "*"
+isort = "*"
+flake8 = "*"
 
 [packages]
 django = "~=5.1"
 django-environ = "~=0.12"
-black = "~=25.1"
-isort = "~=6.0"
-flake8 = "~=7.1"
 python_telegram_bot = "~=21.1"
 phonenumbers = "~=8.13"
 
