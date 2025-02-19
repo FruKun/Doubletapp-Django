@@ -28,6 +28,7 @@ async def post_init(application: Application) -> None:
     await application.bot.set_my_commands(
         [
             ("start", "Starts the bot"),
+            ("help", "bot help"),
             ("set_phone", "set phone"),
             ("me", "get info"),
             ("give_me_link", "get url for info"),
@@ -37,7 +38,7 @@ async def post_init(application: Application) -> None:
 
 def run_bot() -> None:
     application = Application.builder().token(settings.TOKEN).post_init(post_init).build()
-    application.add_handler(CommandHandler("start", command_start_callback))
+    application.add_handler(CommandHandler(["start", "help"], command_start_callback))
     application.add_handler(CommandHandler("set_phone", command_set_phone_callback))
     application.add_handler(CommandHandler("me", command_me_callback))
     application.add_handler(CommandHandler("give_me_link", command_me_link_callback))
