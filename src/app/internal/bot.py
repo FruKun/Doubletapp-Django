@@ -10,11 +10,11 @@ from telegram.ext import (
 )
 
 from app.internal.transport.bot.handlers import (
-    command_me_handler,
-    command_me_link_handler,
-    command_set_phone_handler,
-    command_start_handler,
-    message_handler,
+    command_me_callback,
+    command_me_link_callback,
+    command_set_phone_callback,
+    command_start_callback,
+    message_callback,
 )
 
 # Enable logging
@@ -37,10 +37,9 @@ async def post_init(application: Application) -> None:
 
 def run_bot() -> None:
     application = Application.builder().token(settings.TOKEN).post_init(post_init).build()
-    application.add_handler(CommandHandler("start", command_start_handler))
-    application.add_handler(CommandHandler("set_phone", command_set_phone_handler))
-    application.add_handler(CommandHandler("me", command_me_handler))
-    application.add_handler(CommandHandler("give_me_link", command_me_link_handler))
-    application.add_handler(MessageHandler(filters.TEXT, message_handler))
-
+    application.add_handler(CommandHandler("start", command_start_callback))
+    application.add_handler(CommandHandler("set_phone", command_set_phone_callback))
+    application.add_handler(CommandHandler("me", command_me_callback))
+    application.add_handler(CommandHandler("give_me_link", command_me_link_callback))
+    application.add_handler(MessageHandler(filters.TEXT, message_callback))
     application.run_polling(allowed_updates=Update.ALL_TYPES)
