@@ -2,7 +2,7 @@ from phonenumbers import NumberParseException
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from app.internal.models.user_data import UserData
+from app.internal.models.user_data import TelegramUser
 from app.internal.services.user_service import get_user, save_user, set_phone
 
 
@@ -49,7 +49,7 @@ async def message_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                 "You can send me your phone with command /set_phone\n"
                 + "Or give me phone number in line /set_phone +78005553535"
             )
-    except (KeyError, UserData.DoesNotExist):
+    except (KeyError, TelegramUser.DoesNotExist):
         await update.message.reply_text("you are not registered, enter the command /start")
     except NumberParseException:
         await update.message.reply_text(
@@ -65,14 +65,20 @@ async def command_me_callback(update: Update, context: ContextTypes.DEFAULT_TYPE
         if not user.phone_number:
             await update.message.reply_text("u need set phone /set_phone")
         else:
+            text = f"{update.message.from_user.id}: {user.full_name}\nyour accounts:\n"
+            async for i in user.bankaccount_set.all():
+                text += f"{i.number},\tbalance: {i.balance}\ncards:\n"
+                async for j in i.bankcard_set.all():
+                    text += f"\t\t\t{j.number}\n"
             await update.message.reply_text(
                 "its u:\n"
                 + f"full name: {str(user.full_name)}\n"
                 + f"username: {str(user.username)}\n"
                 + f"phone number: {str(user.phone_number)}\n"
+                + text
                 + "u can use /give_me_link"
             )
-    except UserData.DoesNotExist:
+    except TelegramUser.DoesNotExist:
         await save_user(
             update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username
         )
@@ -88,9 +94,9 @@ async def command_me_link_callback(update: Update, context: ContextTypes.DEFAULT
         if not user.phone_number:
             await update.message.reply_text("u need set phone /set_phone")
         else:
-            await update.message.reply_text(f"http://127.0.0.1:8000/api/get_user?user_id={user_id}")
+            await update.message.reply_text(f"http://192.168.0.178:8000/api/get_user?user_id={user_id}")
 
-    except UserData.DoesNotExist:
+    except TelegramUser.DoesNotExist:
         await save_user(
             update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username
         )

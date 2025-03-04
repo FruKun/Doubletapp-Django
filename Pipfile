@@ -1,21 +1,16 @@
 [[source]]
-name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
-
-[dev-packages]
-black = "*"
-isort = "*"
-flake8 = "*"
+name = "pypi"
 
 [packages]
-django = "~=5.1"
-django-environ = "~=0.12"
-python_telegram_bot = "~=21.1"
-phonenumbers = "~=8.13"
+django = "5.1.6"
+django-environ = "0.12"
+python-telegram-bot = "21.11.1"
+phonenumbers = "8.13.55"
+psycopg = "3.2.5"
+
+[dev-packages]
 
 [requires]
 python_version = "3.13"
-
-[pipenv]
-allow_prereleases = true

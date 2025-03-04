@@ -39,3 +39,6 @@ check_lint:
 
 bot:
 	python src/manage.py run_bot
+
+docker:
+	sudo docker-compose up --build
