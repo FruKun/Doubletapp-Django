@@ -40,5 +40,11 @@ check_lint:
 bot:
 	python src/manage.py run_bot
 
-docker:
-	sudo docker-compose up --build
+docker-rebuild:
+	sudo docker-compose up --build -d
+docker-up:
+	sudo docker-compose up -d
+docker-down:
+	sudo docker-compose down
+docker-logs:
+	sudo docker-compose logs
