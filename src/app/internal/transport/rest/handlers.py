@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 
-from app.internal.models.user_data import TelegramUser
+from app.internal.models.bank_data import BankAccount, BankCard
 
 
 def get_user(request):
@@ -9,18 +9,16 @@ def get_user(request):
         return JsonResponse({"error": "Dont have user_id"}, status=400)
 
     try:
-        user = TelegramUser.objects.get(id=user_id)
-        bank_account = {
-            i.number: {"balance": i.balance, "cards": [j.number for j in i.bankcard_set.all()]}
-            for i in user.bankaccount_set.all()
-        }
-    except TelegramUser.DoesNotExist:
+        cards = list(BankCard.objects.select_related("account", "account__user").filter(account__user__id=user_id))
+        accounts = BankAccount.objects.filter(user__id=user_id)
+    except BankAccount.DoesNotExist:
         return JsonResponse({"error": "User does not exist"}, status=404)
     data = {
-        "user id": user.id,
-        "full name": user.full_name,
-        "username": user.username,
-        "phone number": user.phone_number,
-        "bank accounts": bank_account,
+        "user id": cards[0].account.user.id,
+        "full name": cards[0].account.user.full_name,
+        "username": cards[0].account.user.username,
+        "phone number": cards[0].account.user.phone_number,
+        "bank accounts": {i.number: f"balance:{i.balance}" for i in accounts},
+        "bank cards": {i.number: {"account": i.account.number, "balance": i.available_balance} for i in cards},
     }
     return JsonResponse(data)

@@ -1,25 +1,27 @@
 services:
   postgres:
     image: postgres:17.4
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     env_file:
       - .env
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
-  django:
+  django-bot:
     build: .
     environment:
-      BOT_SECRET_TOKEN: ${BOT_SECRET_TOKEN}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: "postgres"
       POSTGRES_PORT: 5432
     env_file:
       - .env
     command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py run_bot"
+  django-web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_HOST: "postgres"
+      POSTGRES_PORT: 5432
+    env_file:
+      - .env
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"

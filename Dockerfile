@@ -1,14 +1,13 @@
-FROM python:3.13.2-slim as builder
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt 
-FROM python:3.13.2-slim
-RUN apt-get -y update \
-    && apt-get install -y libpq5 \
-    && apt-get clean
+FROM python:3.13.2-slim as python-base
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+FROM python-base as builder
+COPY pyproject.toml poetry.lock .
+RUN pip install --no-cache-dir poetry \
+    && poetry config virtualenvs.create false \
+    && poetry install --no-interaction --no-cache --no-root --no-directory --without dev
+FROM python-base
 COPY --from=builder /usr/local/lib/python3.13/site-packages/ /usr/local/lib/python3.13/site-packages/
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
 WORKDIR /app
 COPY src/ .

@@ -41,10 +41,10 @@ bot:
 	python src/manage.py run_bot
 
 docker-rebuild:
-	sudo docker-compose up --build -d
+	docker compose up --build -d
 docker-up:
-	sudo docker-compose up -d
+	docker compose up -d
 docker-down:
-	sudo docker-compose down
+	docker compose down
 docker-logs:
-	sudo docker-compose logs
+	docker compose logs

@@ -17,7 +17,12 @@ import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-env = environ.Env()
+env = environ.Env(
+    DEBUG=(bool, False),
+    DJANGO_ALLOWED_HOSTS=(str, "127.0.0.1 localhost 0.0.0.0"),
+    POSTGRES_HOST=(str, "localhost"),
+    POSTGRES_PORT=(int, 5432),
+)
 env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 TOKEN = env("BOT_SECRET_TOKEN")
 
@@ -28,9 +33,9 @@ TOKEN = env("BOT_SECRET_TOKEN")
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(env("DEBUG", default=0))
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.0.178"]
+ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
@@ -60,7 +65,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -85,8 +90,8 @@ DATABASES = {
         "NAME": env("POSTGRES_DB"),
         "USER": env("POSTGRES_USER"),
         "PASSWORD": env("POSTGRES_PASSWORD"),
-        "HOST": env("POSTGRES_HOST", default="localhost"),
-        "PORT": env("POSTGRES_PORT", default=5432),
+        "HOST": env("POSTGRES_HOST"),
+        "PORT": env("POSTGRES_PORT"),
     }
 }
 
