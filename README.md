@@ -3,7 +3,7 @@
 ### install dependencies
 
 ```sh
-pipenv sync
+poetry install --no-root
 ```
 
 ### create .env
@@ -24,4 +24,22 @@ make dev
 
 ```sh
 make bot
+```
+
+### start docker
+
+```sh
+make docker-up
+```
+
+### down docker
+
+```sh
+make docker-down
+```
+
+### logs docker
+
+```sh
+make docker-logs
 ```
