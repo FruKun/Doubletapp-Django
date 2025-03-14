@@ -39,12 +39,3 @@ check_lint:
 
 bot:
 	python src/manage.py run_bot
-
-docker-rebuild:
-	docker compose up --build -d
-docker-up:
-	docker compose up -d
-docker-down:
-	docker compose down
-docker-logs:
-	docker compose logs

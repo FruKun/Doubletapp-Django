@@ -1,12 +1,8 @@
-from django.conf import settings
-from django.template.loader import render_to_string
 from phonenumbers import NumberParseException
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from app.internal.models.bank_data import BankAccount
-from app.internal.models.user_data import TelegramUser
-from app.internal.services.bank_services import get_accounts, get_cards
+from app.internal.models.user_data import UserData
 from app.internal.services.user_service import get_user, save_user, set_phone
 
 
@@ -14,13 +10,10 @@ async def command_start_callback(update: Update, context: ContextTypes.DEFAULT_T
     """/start"""
     context.user_data["state"] = "default"
     await save_user(update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username)
-    await update.message.reply_html("command_start.html")
-
-
-async def command_help_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """/help"""
-    context.user_data["state"] = "default"
-    await update.message.reply_html("command_help.html", context={})
+    await update.message.reply_text(
+        "Hello! You can send me your phone with command /set_phone\n"
+        + "Or give me phone number in line /set_phone +78005553535"
+    )
 
 
 async def command_set_phone_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -52,12 +45,15 @@ async def message_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             await update.message.reply_text("Done")
 
         else:
-            await update.message.reply_html("command_start.html")
-    except (KeyError, TelegramUser.DoesNotExist):
+            await update.message.reply_text(
+                "You can send me your phone with command /set_phone\n"
+                + "Or give me phone number in line /set_phone +78005553535"
+            )
+    except (KeyError, UserData.DoesNotExist):
         await update.message.reply_text("you are not registered, enter the command /start")
     except NumberParseException:
         await update.message.reply_text(
-            "try again, u can sand me your phone with command /set_phone\n" + "Example: +78005553535"
+            "try again, u can sand me your phone with comman /set_phone\n" + "Example: +78005553535"
         )
 
 
@@ -69,13 +65,14 @@ async def command_me_callback(update: Update, context: ContextTypes.DEFAULT_TYPE
         if not user.phone_number:
             await update.message.reply_text("u need set phone /set_phone")
         else:
-            await update.message.reply_html(
-                render_to_string(
-                    "command_me.html",
-                    context={"fullname": user.full_name, "username": user.username, "phone": user.phone_number},
-                )
+            await update.message.reply_text(
+                "its u:\n"
+                + f"full name: {str(user.full_name)}\n"
+                + f"username: {str(user.username)}\n"
+                + f"phone number: {str(user.phone_number)}\n"
+                + "u can use /give_me_link"
             )
-    except TelegramUser.DoesNotExist:
+    except UserData.DoesNotExist:
         await save_user(
             update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username
         )
@@ -91,44 +88,10 @@ async def command_me_link_callback(update: Update, context: ContextTypes.DEFAULT
         if not user.phone_number:
             await update.message.reply_text("u need set phone /set_phone")
         else:
-            await update.message.reply_text(f"http://{settings.ALLOWED_HOSTS[0]}:8000/api/get_user?user_id={user_id}")
+            await update.message.reply_text(f"http://127.0.0.1:8000/api/get_user?user_id={user_id}")
 
-    except TelegramUser.DoesNotExist:
+    except UserData.DoesNotExist:
         await save_user(
             update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username
         )
         await update.message.reply_text("Bot dont have information about u\nBefore u need set phone /set_phone")
-
-
-async def command_accounts_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """/accounts"""
-    context.user_data["state"] = "default"
-    try:
-        user = await get_user(update.message.from_user.id)
-        if user.phone_number:
-            accounts = await get_accounts(user)
-            response = render_to_string("command_accounts.html", context={"list": accounts})
-        else:
-            response = "u need set phone /set_phone"
-    except TelegramUser.DoesNotExist:
-        response = "u not registered\nwrite /start"
-    await update.message.reply_text(response)
-
-
-async def command_cards_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """/cards"""
-    context.user_data["state"] = "default"
-    try:
-        user = await get_user(update.message.from_user.id)
-        if not user.phone_number:
-            response = "u need set phone /set_phone"
-        if context.args:
-            cards = await get_cards(context.args[0])
-            response = render_to_string("command_cards.html", context={"list": cards})
-        else:
-            response = "try again\nexample: /cards 12345"
-    except TelegramUser.DoesNotExist:
-        response = "u not registered\nwrite /start"
-    except BankAccount.DoesNotExist:
-        response = "u dont have this account"
-    await update.message.reply_text(response)
