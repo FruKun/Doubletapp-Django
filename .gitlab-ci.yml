@@ -9,7 +9,7 @@ build-job:
   tags:
     - job:build
   environment:
-    name: test
+    name: prod
 deploy-job:
   stage: deploy
   script:
