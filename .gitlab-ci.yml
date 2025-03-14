@@ -7,7 +7,7 @@ build-job:
     - make build push
   tags:
     - job:build
-  evironment:
+  environment:
     name: test
 deploy-job:
   stage: deploy
@@ -15,7 +15,7 @@ deploy-job:
     - make pull down migrate up
   tags:
     - job:deploy.prod/1
-  evironment:
+  environment:
     name: prod
 before_script:
   - apk add make
