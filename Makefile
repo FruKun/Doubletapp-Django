@@ -40,11 +40,16 @@ check_lint:
 bot:
 	python src/manage.py run_bot
 
-docker-rebuild:
-	docker compose up --build -d
-docker-up:
-	docker compose up -d
-docker-down:
+build:
+	docker build -t $CI_REGISTRY/frukun1/doubletapp-django/django:$CI_ENVIRONMENT_SLUG-$CI_COMMIT_SHA .
+up:
+	docker compose -f docker-compose-prod.yml up -d
+down:
 	docker compose down
-docker-logs:
+logs:
 	docker compose logs
+pull:
+	git pull
+	docker image pull
+push:
+	docker image push $CI_REGISTRY/frukun1/doubletapp-django/django:$CI_ENVIRONMENT_SLUG-$CI_COMMIT_SHA
