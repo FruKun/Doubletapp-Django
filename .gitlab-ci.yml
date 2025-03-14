@@ -1,3 +1,4 @@
+image: docker:28.0.1-cli-alpine3.21
 stages:
   - build
   - deploy
