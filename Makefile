@@ -45,9 +45,9 @@ build:
 up:
 	docker compose -f docker-compose-prod.yml up -d
 down:
-	docker compose down
+	docker compose -f docker-compose-prod.yml down
 logs:
-	docker compose logs
+	docker compose -f docker-compose-prod.yml logs
 pull:
 	docker image pull django:latest
 push:
