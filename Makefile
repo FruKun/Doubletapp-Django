@@ -49,7 +49,6 @@ down:
 logs:
 	docker compose logs
 pull:
-	git pull
 	docker image pull
 push:
 	docker image push $$CI_REGISTRY/frukun1/doubletapp-django/django:$$CI_ENVIRONMENT_SLUG-$$CI_COMMIT_SHA
