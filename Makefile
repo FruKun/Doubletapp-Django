@@ -38,7 +38,7 @@ check_lint:
 	black --check --config pyproject.toml .
 
 bot:
-	python src/manage.py run_bot
+	python manage.py run_bot
 
 build:
 	docker build -t $$CI_REGISTRY/frukun1/doubletapp-django/django:$$CI_ENVIRONMENT_SLUG-$$CI_COMMIT_SHA .
