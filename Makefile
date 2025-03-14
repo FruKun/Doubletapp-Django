@@ -41,7 +41,7 @@ bot:
 	python src/manage.py run_bot
 
 build:
-	docker build -t $CI_REGISTRY/frukun1/doubletapp-django/django:$CI_ENVIRONMENT_SLUG-$CI_COMMIT_SHA .
+	docker build -t $$CI_REGISTRY/frukun1/doubletapp-django/django:$$CI_ENVIRONMENT_SLUG-$$CI_COMMIT_SHA .
 up:
 	docker compose -f docker-compose-prod.yml up -d
 down:
