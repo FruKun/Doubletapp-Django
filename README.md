@@ -29,17 +29,17 @@ make bot
 ### start docker
 
 ```sh
-make docker-up
+make up
 ```
 
 ### down docker
 
 ```sh
-make docker-down
+make down
 ```
 
 ### logs docker
 
 ```sh
-make docker-logs
+make logs
 ```
