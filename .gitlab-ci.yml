@@ -8,6 +8,8 @@ build-job:
     - make build push
   tags:
     - job:build
+  only:
+    - main
   environment:
     name: prod
 deploy-job:
@@ -16,6 +18,8 @@ deploy-job:
     - make pull down up
   tags:
     - job:deploy.prod/1
+  only:
+    - main
   environment:
     name: prod
 before_script:

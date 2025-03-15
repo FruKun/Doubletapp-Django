@@ -14,13 +14,13 @@ async def command_start_callback(update: Update, context: ContextTypes.DEFAULT_T
     """/start"""
     context.user_data["state"] = "default"
     await save_user(update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username)
-    await update.message.reply_html("command_start.html")
+    await update.message.reply_html(render_to_string("command_start.html"))
 
 
 async def command_help_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/help"""
     context.user_data["state"] = "default"
-    await update.message.reply_html("command_help.html", context={})
+    await update.message.reply_html(render_to_string("command_help.html", context={}))
 
 
 async def command_set_phone_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -52,7 +52,7 @@ async def message_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             await update.message.reply_text("Done")
 
         else:
-            await update.message.reply_html("command_start.html")
+            await update.message.reply_html(render_to_string("command_start.html"))
     except (KeyError, TelegramUser.DoesNotExist):
         await update.message.reply_text("you are not registered, enter the command /start")
     except NumberParseException:
