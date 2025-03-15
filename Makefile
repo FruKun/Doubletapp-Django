@@ -41,7 +41,7 @@ bot:
 	python3 src/manage.py run_bot
 
 build:
-	docker build -t $$CI_REGISTRY/frukun1/doubletapp-django/telegram-bot:$$CI_ENVIRONMENT_SLUG-$$CI_COMMIT_SHA .
+	docker build -t $$IMAGE_APP .
 up:
 	docker compose -f docker-compose-prod.yml up -d
 down:
@@ -49,6 +49,6 @@ down:
 logs:
 	docker compose -f docker-compose-prod.yml logs
 pull:
-	docker image pull django:latest
+	docker image pull $$IMAGE_APP
 push:
-	docker image push $$CI_REGISTRY/frukun1/doubletapp-django/telegram-bot:$$CI_ENVIRONMENT_SLUG-$$CI_COMMIT_SHA
+	docker image push $$IMAGE_APP

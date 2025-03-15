@@ -6,7 +6,7 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
   django-bot:
-    image: $CI_REGISTRY/frukun1/doubletapp-django/telegram-bot:$CI_ENVIRONMENT_SLUG-$CI_COMMIT_SHA
+    image: $IMAGE_APP
     environment:
       POSTGRES_HOST: "postgres"
       POSTGRES_PORT: 5432
@@ -14,7 +14,7 @@ services:
       - .env
     command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py run_bot"
   django-web:
-    image: $CI_REGISTRY/frukun1/doubletapp-django/telegram-bot:$CI_ENVIRONMENT_SLUG-$CI_COMMIT_SHA
+    image: $IMAGE_APP
     ports:
       - "8000:8000"
     environment:
