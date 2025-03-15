@@ -1,27 +1,27 @@
 migrate:
-	python manage.py migrate $(if $m, api $m,)
+	python3 manage.py migrate $(if $m, api $m,)
 
 makemigrations:
-	python src/manage.py makemigrations
+	python3 src/manage.py makemigrations
 	sudo chown -R ${USER} src/app/migrations/
 
 createsuperuser:
-	python src/manage.py createsuperuser
+	python3 src/manage.py createsuperuser
 
 collectstatic:
-	python src/manage.py collectstatic --no-input
+	python3 src/manage.py collectstatic --no-input
 
 dev:
-	python src/manage.py runserver localhost:8000
+	python3 src/manage.py runserver localhost:8000
 
 command:
-	python src/manage.py ${c}
+	python3 src/manage.py ${c}
 
 shell:
-	python src/manage.py shell
+	python3 src/manage.py shell
 
 debug:
-	python src/manage.py debug
+	python3 src/manage.py debug
 
 piplock:
 	pipenv install
@@ -38,7 +38,7 @@ check_lint:
 	black --check --config pyproject.toml .
 
 bot:
-	python src/manage.py run_bot
+	python3 src/manage.py run_bot
 
 build:
 	docker build -t $$CI_REGISTRY/frukun1/doubletapp-django/telegram-bot:$$CI_ENVIRONMENT_SLUG-$$CI_COMMIT_SHA .
