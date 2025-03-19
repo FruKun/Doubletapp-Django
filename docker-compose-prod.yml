@@ -12,6 +12,8 @@ services:
       POSTGRES_PORT: 5432
     env_file:
       - .env
+    networks:
+      - network1
     command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py run_bot"
   django-web:
     image: $IMAGE_APP
@@ -22,4 +24,10 @@ services:
       POSTGRES_PORT: 5432
     env_file:
       - .env
+    networks:
+      - network1
     command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+networks:
+  network1:
+    name: my_network
+    external: true

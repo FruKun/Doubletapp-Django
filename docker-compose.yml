@@ -3,5 +3,11 @@ services:
     image: postgres:17.4
     env_file:
       - .env
+    networks:
+      - network1
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
+
+networks:
+  network1:
+    name: my_network
