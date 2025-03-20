@@ -1,0 +1,10 @@
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+  django-bot:
+    image: !reset null
+    build: .
+  django-web:
+    image: !reset null
+    build: .

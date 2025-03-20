@@ -14,3 +14,31 @@ exclude = '''
   | dist
 )/
 '''
+
+[project]
+name = "doubletapp-django"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "frukun",email = "peromata@yandex.ru"}
+]
+readme = "README.md"
+requires-python = "3.13.2"
+dependencies = [
+    "django (==5.1.7)",
+    "django-environ (==0.12.0)",
+    "phonenumbers (==9.0.0)",
+    "python-telegram-bot (==21.11.1)",
+    "psycopg[binary] (==3.2.5)"
+]
+
+[tool.poetry]
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+flake8 = "^7.1.2"
+isort = "^6.0.1"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
