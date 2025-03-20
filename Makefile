@@ -45,11 +45,11 @@ dev-down:
 dev-logs:
 	docker compose -f docker-compose-dev.yml logs
 up:
-	docker compose -f up -d
+	docker compose up -d
 down:
-	docker compose -f down
+	docker compose down
 logs:
-	docker compose -f logs
+	docker compose logs
 pull:
 	docker image pull $$IMAGE_APP
 push:
