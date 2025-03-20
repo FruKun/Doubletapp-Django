@@ -23,10 +23,6 @@ shell:
 debug:
 	python3 src/manage.py debug
 
-piplock:
-	pipenv install
-	sudo chown -R ${USER} Pipfile.lock
-
 lint:
 	isort .
 	flake8 --config setup.cfg
@@ -42,12 +38,18 @@ bot:
 
 build:
 	docker build -t $$IMAGE_APP .
+dev-up:
+	docker compose -f docker-compose-dev.yml up -d
+dev-down:
+	docker compose -f docker-compose-dev.yml down
+dev-logs:
+	docker compose -f docker-compose-dev.yml logs
 up:
-	docker compose -f docker-compose-prod.yml up -d
+	docker compose -f up -d
 down:
-	docker compose -f docker-compose-prod.yml down
+	docker compose -f down
 logs:
-	docker compose -f docker-compose-prod.yml logs
+	docker compose -f logs
 pull:
 	docker image pull $$IMAGE_APP
 push:
