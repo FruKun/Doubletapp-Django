@@ -1,31 +1,27 @@
 migrate:
-	python src/manage.py migrate $(if $m, api $m,)
+	python3 manage.py migrate $(if $m, api $m,)
 
 makemigrations:
-	python src/manage.py makemigrations
+	python3 src/manage.py makemigrations
 	sudo chown -R ${USER} src/app/migrations/
 
 createsuperuser:
-	python src/manage.py createsuperuser
+	python3 src/manage.py createsuperuser
 
 collectstatic:
-	python src/manage.py collectstatic --no-input
+	python3 src/manage.py collectstatic --no-input
 
 dev:
-	python src/manage.py runserver localhost:8000
+	python3 src/manage.py runserver localhost:8000
 
 command:
-	python src/manage.py ${c}
+	python3 src/manage.py ${c}
 
 shell:
-	python src/manage.py shell
+	python3 src/manage.py shell
 
 debug:
-	python src/manage.py debug
-
-piplock:
-	pipenv install
-	sudo chown -R ${USER} Pipfile.lock
+	python3 src/manage.py debug
 
 lint:
 	isort .
@@ -38,4 +34,23 @@ check_lint:
 	black --check --config pyproject.toml .
 
 bot:
-	python src/manage.py run_bot
+	python3 src/manage.py run_bot
+
+build:
+	docker build -t $$IMAGE_APP .
+dev-up:
+	docker compose -f docker-compose.yml -f docker-compose-dev.yml up -d
+dev-down:
+	docker compose -f docker-compose.yml -f docker-compose-dev.yml down
+dev-logs:
+	docker compose -f docker-compose.yml -f docker-compose-dev.yml logs
+up:
+	docker compose up -d
+down:
+	docker compose down
+logs:
+	docker compose logs
+pull:
+	docker image pull $$IMAGE_APP
+push:
+	docker image push $$IMAGE_APP

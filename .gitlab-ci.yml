@@ -1,0 +1,28 @@
+image: docker:28.0.1-dind
+stages:
+  - build
+  - deploy
+build-job:
+  stage: build
+  script:
+    - make build push
+  tags:
+    - job:build
+  # only:
+  #   - main
+  environment:
+    name: prod
+deploy-job:
+  stage: deploy
+  script:
+    - make pull down up
+  tags:
+    - job:deploy.prod/1
+  # only:
+  #   - main
+  environment:
+    name: prod
+before_script:
+  - apk add make
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - cp $DOT_ENV $(pwd)/.env
