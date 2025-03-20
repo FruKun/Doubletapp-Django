@@ -39,11 +39,11 @@ bot:
 build:
 	docker build -t $$IMAGE_APP .
 dev-up:
-	docker compose -f docker-compose-dev.yml up -d
+	docker compose -f docker-compose.yml -f docker-compose-dev.yml up -d
 dev-down:
-	docker compose -f docker-compose-dev.yml down
+	docker compose -f docker-compose.yml -f docker-compose-dev.yml down
 dev-logs:
-	docker compose -f docker-compose-dev.yml logs
+	docker compose -f docker-compose.yml -f docker-compose-dev.yml logs
 up:
 	docker compose up -d
 down:
