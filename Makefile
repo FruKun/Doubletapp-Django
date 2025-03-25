@@ -58,4 +58,5 @@ logs:
 pull:
 	docker image pull $$IMAGE_APP
 push:
+	docker image push $$IMAGE_NGINX
 	docker image push $$IMAGE_APP
