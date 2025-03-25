@@ -26,13 +26,14 @@ services:
       - static:/app/static
       - media:/app/media
     command: bash -c "python manage.py makemigrations && python manage.py migrate && gunicorn config.wsgi --bind 0.0.0.0:8000"
-  # nginx:
-  #   build: /nginx
-  #   ports:
-  #     - $INTERNAL_NGINX_PORT:80
-  #   volumes:
-  #     - static:/app/static
-  #     - media:/app/media
+  nginx:
+    image: $IMAGE_NGINX
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - static:/app/static
+      - media:/app/media
 
 volumes:
   postgres:

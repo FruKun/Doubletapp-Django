@@ -15,7 +15,7 @@ build-job:
 deploy-job:
   stage: deploy
   script:
-    - make pull down up
+    - make pull collectstatic down up
   tags:
     - job:deploy.prod/1
   # only:

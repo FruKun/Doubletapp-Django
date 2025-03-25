@@ -37,7 +37,12 @@ bot:
 	python3 src/manage.py run_bot
 
 build:
+	docker build -t $$IMAGE_NGINX ./nginx
 	docker build -t $$IMAGE_APP .
+local-up:
+	docker compose -f docker-compose.yml -f docker-compose-local.yml up -d
+local-down:
+	docker compose -f docker-compose.yml -f docker-compose-local.yml down
 dev-up:
 	docker compose -f docker-compose.yml -f docker-compose-dev.yml up -d --build
 dev-down:
