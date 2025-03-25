@@ -29,8 +29,7 @@ services:
   nginx:
     image: $IMAGE_NGINX
     ports:
-      - 80:80
-      - 443:443
+      - 6000:80
     volumes:
       - static:/src/static
       - media:/src/media
