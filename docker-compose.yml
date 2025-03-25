@@ -25,7 +25,7 @@ services:
     volumes:
       - static:/app/static
       - media:/app/media
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manape.py collectstatic --no-input && gunicorn config.wsgi --bind 0.0.0.0:8000"
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --no-input && gunicorn config.wsgi --bind 0.0.0.0:8000"
   nginx:
     image: $IMAGE_NGINX
     ports:
