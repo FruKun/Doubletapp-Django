@@ -23,6 +23,7 @@ from app.internal.transport.bot.handlers import (
     command_start_callback,
     message_callback,
 )
+from config.settings import DEBUG
 
 # Enable logging
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -63,4 +64,12 @@ def run_bot() -> None:
     application.add_handler(CommandHandler("send_money", command_send_money_callback))
     application.add_handler(CommandHandler("give_me_link", command_me_link_callback))
     application.add_handler(MessageHandler(filters.TEXT, message_callback))
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
+    if DEBUG:
+        application.run_polling(allowed_updates=Update.ALL_TYPES)
+    else:
+        application.run_webhook(
+            listen="0.0.0.0",
+            port=3000,
+            url_path="webhook",
+            webhook_url="https://frukun.backend25.2tapp.cc",
+        )
