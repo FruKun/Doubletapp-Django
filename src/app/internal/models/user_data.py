@@ -2,10 +2,14 @@ from django.db import models
 
 
 class TelegramUser(models.Model):
+    def set_favourites() -> dict:
+        return {"usernames": [], "accounts": [], "cards": []}
+
     id = models.IntegerField(primary_key=True)
     full_name = models.CharField(max_length=255)
     username = models.CharField(max_length=255, unique=True, null=True)
     phone_number = models.CharField(max_length=30, unique=True, null=True)
+    list_of_favourites = models.JSONField(default=set_favourites)
     created_at = models.DateField(auto_now_add=True)
 
     class Meta:

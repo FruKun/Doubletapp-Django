@@ -1,13 +1,14 @@
 from django.conf import settings
+from django.db.utils import IntegrityError
 from django.template.loader import render_to_string
 from phonenumbers import NumberParseException
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from app.internal.models.bank_data import BankAccount
+from app.internal.models.bank_data import BankAccount, BankCard
 from app.internal.models.user_data import TelegramUser
-from app.internal.services.bank_services import get_accounts, get_cards
-from app.internal.services.user_service import get_user, save_user, set_phone
+from app.internal.services.bank_services import get_accounts, get_cards, send_money
+from app.internal.services.user_service import add_favorite, del_favorite, get_user, save_user, set_phone
 
 
 async def command_start_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -131,4 +132,72 @@ async def command_cards_callback(update: Update, context: ContextTypes.DEFAULT_T
         response = "u not registered\nwrite /start"
     except BankAccount.DoesNotExist:
         response = "u dont have this account"
+    await update.message.reply_text(response)
+
+
+async def command_favourites_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/favourites"""
+    context.user_data["state"] = "default"
+    try:
+        user = await get_user(update.message.from_user.id)
+        favourites = user.list_of_favourites
+        response = render_to_string(
+            "command_favourites.html",
+            context={
+                "usernames": favourites["usernames"],
+                "accounts": favourites["accounts"],
+                "cards": favourites["cards"],
+            },
+        )
+    except TelegramUser.DoesNotExist:
+        response = "u not registered\nwrite /start"
+    await update.message.reply_text(response)
+
+
+async def command_add_favorite_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/add_favorite"""
+    context.user_data["state"] = "default"
+    try:
+        await add_favorite(update.message.from_user.id, context.args[0])
+        response = "done"
+    except TelegramUser.DoesNotExist:
+        response = render_to_string("favorite_error.html", context={"error": "user"})
+    except BankAccount.DoesNotExist:
+        response = render_to_string("favorite_error.html", context={"error": "account"})
+    except BankCard.DoesNotExist:
+        response = render_to_string("favorite_error.html", context={"error": "card"})
+    except Exception:
+        response = render_to_string("favorite_error.html", context={"error": "base"})
+    await update.message.reply_text(response)
+
+
+async def command_del_favorite_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/del_favorite"""
+    context.user_data["state"] = "default"
+    try:
+        await del_favorite(update.message.from_user.id, context.args[0])
+        response = "done"
+    except TelegramUser.DoesNotExist:
+        response = render_to_string("favorite_error.html", context={"error": "user"})
+    except Exception:
+        response = render_to_string("favorite_error.html", context={"error": "del"})
+    await update.message.reply_text(response)
+
+
+async def command_send_money_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/send_money {payment_sender} {payee} {amount}"""
+    context.user_data["state"] = "default"
+    try:
+        await send_money(context.args[0], context.args[1], context.args[2], update.message.from_user.id)
+        response = render_to_string("command_send_money.html", context={"error": ""})
+    except IntegrityError:
+        response = render_to_string("command_send_money.html", context={"error": "integrity"})
+    except AttributeError:
+        response = render_to_string("command_send_money.html", context={"error": "attribute"})
+    except ValueError:
+        response = render_to_string("command_send_money.html", context={"error": "value"})
+    except (IndexError, TelegramUser.DoesNotExist):
+        response = render_to_string("command_send_money.html", context={"error": "index"})
+    except BankAccount.DoesNotExist:
+        response = render_to_string("command_send_money.html", context={"error": "account"})
     await update.message.reply_text(response)

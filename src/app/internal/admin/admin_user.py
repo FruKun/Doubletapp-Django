@@ -12,5 +12,5 @@ class AdminUserAdmin(UserAdmin):
 
 @admin.register(TelegramUser)
 class TelegramUserAdmin(admin.ModelAdmin):
-    list_display = ("id", "full_name", "username", "phone_number", "created_at")
+    list_display = ("id", "full_name", "username", "phone_number", "list_of_favourites", "created_at")
     readonly_fields = ("created_at",)
