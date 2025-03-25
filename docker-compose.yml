@@ -32,8 +32,8 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - static:/app/static
-      - media:/app/media
+      - static:/src/static
+      - media:/src/media
 
 volumes:
   postgres:
