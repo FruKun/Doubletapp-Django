@@ -70,6 +70,6 @@ def run_bot() -> None:
         application.run_webhook(
             listen="0.0.0.0",
             port=3000,
-            url_path="webhook",
+            url_path="1",
             webhook_url="https://frukun.backend25.2tapp.cc",
         )
