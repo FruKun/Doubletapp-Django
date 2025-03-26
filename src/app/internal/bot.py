@@ -71,5 +71,5 @@ def run_bot() -> None:
             listen="0.0.0.0",
             port=3000,
             url_path="webhook",
-            webhook_url="https://frukun.backend25.2tapp.cc/webhook",
+            webhook_url="https://frukun.backend25.2tapp.cc/webhook/",
         )
