@@ -37,6 +37,7 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(" ")
 
+CSRF_TRUSTED_ORIGINS = ["https://frukun.backend25.2tapp.cc"]
 
 # Application definition
 
