@@ -527,18 +527,19 @@ files = [
 
 [[package]]
 name = "python-telegram-bot"
-version = "21.11.1"
+version = "22.0"
 description = "We have made you a wrapper you can't refuse"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "python_telegram_bot-21.11.1-py3-none-any.whl", hash = "sha256:17f933a7a0569f519d9b672e06d71c29ab3688f1ec575ba59a3ca37922481113"},
-    {file = "python_telegram_bot-21.11.1.tar.gz", hash = "sha256:2abda5202f27a838f35e8140e5292af0f4f8fad6c2e5123b2defadd5f4e8ca02"},
+    {file = "python_telegram_bot-22.0-py3-none-any.whl", hash = "sha256:23237f778655e634f08cfebbada96ed3692c2bdd3c20c122e90a6d606d6a4516"},
+    {file = "python_telegram_bot-22.0.tar.gz", hash = "sha256:acf86f28d86d81cab736177d2988e5bcb27f2248137efd62e02c46e9ba1fe44c"},
 ]
 
 [package.dependencies]
 httpx = ">=0.27,<1.0"
+tornado = {version = ">=6.4,<7.0", optional = true, markers = "extra == \"webhooks\""}
 
 [package.extras]
 all = ["aiolimiter (>=1.1,<1.3)", "apscheduler (>=3.10.4,<3.12.0)", "cachetools (>=5.3.3,<5.6.0)", "cffi (>=1.17.0rc1) ; python_version > \"3.12\"", "cryptography (>=39.0.1)", "httpx[http2]", "httpx[socks]", "tornado (>=6.4,<7.0)"]
@@ -580,6 +581,27 @@ dev = ["build", "hatch"]
 doc = ["sphinx"]
 
 [[package]]
+name = "tornado"
+version = "6.4.2"
+description = "Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed."
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "tornado-6.4.2-cp38-abi3-macosx_10_9_universal2.whl", hash = "sha256:e828cce1123e9e44ae2a50a9de3055497ab1d0aeb440c5ac23064d9e44880da1"},
+    {file = "tornado-6.4.2-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:072ce12ada169c5b00b7d92a99ba089447ccc993ea2143c9ede887e0937aa803"},
+    {file = "tornado-6.4.2-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1a017d239bd1bb0919f72af256a970624241f070496635784d9bf0db640d3fec"},
+    {file = "tornado-6.4.2-cp38-abi3-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:c36e62ce8f63409301537222faffcef7dfc5284f27eec227389f2ad11b09d946"},
+    {file = "tornado-6.4.2-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bca9eb02196e789c9cb5c3c7c0f04fb447dc2adffd95265b2c7223a8a615ccbf"},
+    {file = "tornado-6.4.2-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:304463bd0772442ff4d0f5149c6f1c2135a1fae045adf070821c6cdc76980634"},
+    {file = "tornado-6.4.2-cp38-abi3-musllinux_1_2_i686.whl", hash = "sha256:c82c46813ba483a385ab2a99caeaedf92585a1f90defb5693351fa7e4ea0bf73"},
+    {file = "tornado-6.4.2-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:932d195ca9015956fa502c6b56af9eb06106140d844a335590c1ec7f5277d10c"},
+    {file = "tornado-6.4.2-cp38-abi3-win32.whl", hash = "sha256:2876cef82e6c5978fde1e0d5b1f919d756968d5b4282418f3146b79b58556482"},
+    {file = "tornado-6.4.2-cp38-abi3-win_amd64.whl", hash = "sha256:908b71bf3ff37d81073356a5fadcc660eb10c1476ee6e2725588626ce7e5ca38"},
+    {file = "tornado-6.4.2.tar.gz", hash = "sha256:92bad5b4746e9879fd7bf1eb21dce4e3fc5128d71601f80005afa39237ad620b"},
+]
+
+[[package]]
 name = "tzdata"
 version = "2025.1"
 description = "Provider of IANA time zone data"
@@ -595,4 +617,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "3.13.2"
-content-hash = "3b644b0c5e5c42097af8e60bde7c99e2a2e72d0c419fc0825ad850489be6741f"
+content-hash = "bf6891e173ac3dcaef59a4702e500e881889d1fab9ad1a28a887f720ac07772b"
