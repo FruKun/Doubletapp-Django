@@ -14,12 +14,11 @@ async def save_user(chat_id: int, name: str, nickname: str) -> None:
 
 async def set_phone(chat_id: int, number: str, code: str) -> None:
     if is_valid_number(parse(number=number, region=code)):
-        await TelegramUser.objects.aupdate(
-            id=chat_id,
-            phone_number=format_out_of_country_calling_number(parse(number=number, region=code), code),
-        )
+        user = await get_user(id=chat_id)
+        user.phone_number = format_out_of_country_calling_number(parse(number=number, region=code), code)
+        await user.asave()
     else:
-        raise NumberParseException(0, "it's not base error:is not valid number")
+        raise NumberParseException(0, "is not valid number")
 
 
 async def add_favorite(chat_id: int, favorite: str) -> None:
