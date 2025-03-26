@@ -65,7 +65,7 @@ async def command_me_link_callback(update: Update, context: ContextTypes.DEFAULT
         if not user.phone_number:
             await update.message.reply_text("u need set phone /set_phone")
         else:
-            await update.message.reply_text(f"http://{settings.ALLOWED_HOSTS[0]}/api/get_user?user_id={user_id}")
+            await update.message.reply_text(f"https://{settings.ALLOWED_HOSTS[0]}/api/get_user?user_id={user_id}")
 
     except TelegramUser.DoesNotExist:
         await save_user(

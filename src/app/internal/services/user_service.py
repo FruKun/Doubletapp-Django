@@ -14,7 +14,7 @@ async def save_user(chat_id: int, name: str, nickname: str) -> None:
 
 async def set_phone(chat_id: int, number: str, code: str) -> None:
     if is_valid_number(parse(number=number, region=code)):
-        user = await get_user(id=chat_id)
+        user = await get_user(chat_id)
         user.phone_number = format_out_of_country_calling_number(parse(number=number, region=code), code)
         await user.asave()
     else:
