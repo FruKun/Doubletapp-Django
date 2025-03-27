@@ -135,8 +135,8 @@ async def command_add_favorite_callback(update: Update, context: ContextTypes.DE
         response = render_to_string("favorite_error.html", context={"error": "account"})
     except BankCard.DoesNotExist:
         response = render_to_string("favorite_error.html", context={"error": "card"})
-    except Exception:
-        response = render_to_string("favorite_error.html", context={"error": "base"})
+    # except Exception:
+    #     response = render_to_string("favorite_error.html", context={"error": "base"})
     await update.message.reply_text(response)
 
 
@@ -147,8 +147,8 @@ async def command_del_favorite_callback(update: Update, context: ContextTypes.DE
         response = "done"
     except TelegramUser.DoesNotExist:
         response = render_to_string("favorite_error.html", context={"error": "user"})
-    except Exception:
-        response = render_to_string("favorite_error.html", context={"error": "del"})
+    # except Exception:
+    #     response = render_to_string("favorite_error.html", context={"error": "del"})
     await update.message.reply_text(response)
 
 

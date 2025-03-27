@@ -37,10 +37,11 @@ DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(" ")
 
-CSRF_TRUSTED_ORIGINS = ["https://frukun.backend25.2tapp.cc"]
+CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS").split(" ")
+
+WEBHOOK_PORT = env("WEBHOOK_PORT")
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
