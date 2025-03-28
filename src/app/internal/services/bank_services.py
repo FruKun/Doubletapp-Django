@@ -1,7 +1,11 @@
 from decimal import Decimal
 
+from asgiref.sync import sync_to_async
+from django.db import transaction
+
 from app.internal.models.bank_data import BankAccount, BankCard
 from app.internal.models.user_data import TelegramUser
+from app.internal.services import CustomErrors
 
 
 async def get_account(number: str) -> BankAccount:
@@ -20,26 +24,28 @@ async def get_cards(number: str) -> list[BankCard]:
     return [i async for i in BankCard.objects.filter(account=number)]
 
 
-async def send_money(payment_sender, payee, amount, userid) -> None:
-    async def get_obj(str):
+@sync_to_async
+def send_money(payment_sender: str, payee: str, amount: str, message_sender: TelegramUser) -> None:
+    def get_obj(str):
         if not str.isdigit():
-            response = [i async for i in BankAccount.objects.prefetch_related("user").filter(user__username=str)][0]
+            response = [i for i in BankAccount.objects.prefetch_related("user").filter(user__username=str)][0]
         elif len(str) == 16:
-            response = await BankAccount.objects.prefetch_related("user").aget(bankcard=str)
+            response = BankAccount.objects.prefetch_related("user").get(bankcard=str)
         elif len(str) == 20:
-            response = await BankAccount.objects.prefetch_related("user").aget(number=str)
+            response = BankAccount.objects.prefetch_related("user").get(number=str)
         else:
-            raise ValueError
+            raise CustomErrors.ObjectProperties
         return response
 
     amount = Decimal(amount)
     if amount < 0:
-        raise ValueError
-    payment_sender = await get_obj(payment_sender)
-    if payment_sender.user != await TelegramUser.objects.aget(id=userid):
-        raise AttributeError
-    payee = await get_obj(payee)
-    payment_sender.balance -= amount
-    payee.balance += amount
-    await payment_sender.asave()
-    await payee.asave()
+        raise CustomErrors.AmountMoney
+    payment_sender = get_obj(payment_sender)
+    if payment_sender.user != message_sender:
+        raise CustomErrors.Sender
+    payee = get_obj(payee)
+    with transaction.atomic():
+        payment_sender.balance -= amount
+        payee.balance += amount
+        payment_sender.save()
+        payee.save()

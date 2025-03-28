@@ -68,7 +68,8 @@ def run_bot() -> None:
     else:
         application.run_webhook(
             listen="0.0.0.0",
-            port=settings.WEBHOOK_PORT,
+            port=settings.PORT,
+            secret_token=settings.WEBHOOK_SECRET_TOKEN,
             url_path="webhook",
-            webhook_url="https://frukun.backend25.2tapp.cc/webhook/",
+            webhook_url=f"https://{settings.DOMAIN_URL}/webhook/",
         )

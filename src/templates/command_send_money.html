@@ -1,6 +1,6 @@
 {%if error == "integrity" %}U don't have enough money
-{%elif error == "attribute" %} This is not u account
-{%elif error == "value" %}Try again /send_money {u account number} {payee account number} {amount money}
+{%elif error == "sender" %} This is not u account
+{%elif error == "object" %}Try again /send_money {u account number} {payee account number} {amount money}
 {%elif error == "index" %}user does not exist
 {%elif error == "account" %}account does not exist
 {%else%}Done{%endif%}

@@ -7,6 +7,7 @@ from telegram.ext import ContextTypes
 
 from app.internal.models.bank_data import BankAccount, BankCard
 from app.internal.models.user_data import TelegramUser
+from app.internal.services import CustomErrors
 from app.internal.services.bank_services import get_accounts, get_cards, send_money
 from app.internal.services.user_service import add_favorite, del_favorite, get_user, save_user, set_phone
 
@@ -27,9 +28,12 @@ async def command_set_phone_callback(update: Update, context: ContextTypes.DEFAU
     await save_user(update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username)
     try:
         await set_phone(update.message.from_user.id, context.args[0], update.message.from_user.language_code)
-        await update.message.reply_text("Done")
+        response = "Done"
+    except TelegramUser.DoesNotExist:
+        response = render_to_string("register_error.html")
     except (NumberParseException, AttributeError, IndexError):
-        await update.message.reply_text("try again /set_phone +78005553535")
+        response = "try again /set_phone +78005553535"
+    await update.message.reply_text(response)
 
 
 async def message_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -42,19 +46,16 @@ async def command_me_callback(update: Update, context: ContextTypes.DEFAULT_TYPE
     try:
         user = await get_user(update.message.from_user.id)
         if not user.phone_number:
-            await update.message.reply_text("u need set phone /set_phone")
-        else:
-            await update.message.reply_html(
-                render_to_string(
-                    "command_me.html",
-                    context={"fullname": user.full_name, "username": user.username, "phone": user.phone_number},
-                )
-            )
-    except TelegramUser.DoesNotExist:
-        await save_user(
-            update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username
+            raise CustomErrors.PhoneError
+        response = render_to_string(
+            "command_me.html",
+            context={"fullname": user.full_name, "username": user.username, "phone": user.phone_number},
         )
-        await update.message.reply_text("Bot dont have information about u\nBefore u need set phone /set_phone")
+    except TelegramUser.DoesNotExist:
+        response = render_to_string("register_error.html")
+    except CustomErrors.PhoneError:
+        response = render_to_string("phone_error.html")
+    await update.message.reply_text(response)
 
 
 async def command_me_link_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -63,28 +64,28 @@ async def command_me_link_callback(update: Update, context: ContextTypes.DEFAULT
     try:
         user = await get_user(user_id)
         if not user.phone_number:
-            await update.message.reply_text("u need set phone /set_phone")
-        else:
-            await update.message.reply_text(f"https://{settings.ALLOWED_HOSTS[0]}/api/get_user?user_id={user_id}")
+            raise CustomErrors.PhoneError
+        response = f"https://{settings.DOMAIN_URL}/api/get_user?user_id={user_id}"
 
     except TelegramUser.DoesNotExist:
-        await save_user(
-            update.message.from_user.id, update.message.from_user.full_name, update.message.from_user.username
-        )
-        await update.message.reply_text("Bot dont have information about u\nBefore u need set phone /set_phone")
+        response = render_to_string("register_error.html")
+    except CustomErrors.PhoneError:
+        response = render_to_string("phone_error.html")
+    await update.message.reply_text(response)
 
 
 async def command_accounts_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/accounts"""
     try:
         user = await get_user(update.message.from_user.id)
-        if user.phone_number:
-            accounts = await get_accounts(user)
-            response = render_to_string("command_accounts.html", context={"list": accounts})
-        else:
-            response = "u need set phone /set_phone"
+        if not user.phone_number:
+            raise CustomErrors.PhoneError
+        accounts = await get_accounts(user)
+        response = render_to_string("command_accounts.html", context={"list": accounts})
     except TelegramUser.DoesNotExist:
-        response = "u not registered\nwrite /start"
+        response = render_to_string("register_error.html")
+    except CustomErrors.PhoneError:
+        response = render_to_string("phone_error.html")
     await update.message.reply_text(response)
 
 
@@ -93,16 +94,18 @@ async def command_cards_callback(update: Update, context: ContextTypes.DEFAULT_T
     try:
         user = await get_user(update.message.from_user.id)
         if not user.phone_number:
-            raise TelegramUser.DoesNotExist
+            raise CustomErrors.PhoneError
         if context.args:
             cards = await get_cards(context.args[0])
             response = render_to_string("command_cards.html", context={"list": cards})
         else:
             response = "try again\nexample: /cards 12345"
     except TelegramUser.DoesNotExist:
-        response = "u not registered\nwrite /start"
+        response = render_to_string("register_error.html")
     except BankAccount.DoesNotExist:
         response = "u dont have this account"
+    except CustomErrors.PhoneError:
+        response = render_to_string("phone_error.html")
     await update.message.reply_text(response)
 
 
@@ -113,14 +116,12 @@ async def command_favourites_callback(update: Update, context: ContextTypes.DEFA
         favourites = user.list_of_favourites
         response = render_to_string(
             "command_favourites.html",
-            context={
-                "usernames": favourites["usernames"],
-                "accounts": favourites["accounts"],
-                "cards": favourites["cards"],
-            },
+            context={"list": favourites},
         )
     except TelegramUser.DoesNotExist:
-        response = "u not registered\nwrite /start"
+        response = render_to_string("register_error.html")
+    except CustomErrors.PhoneError:
+        response = render_to_string("phone_error.html")
     await update.message.reply_text(response)
 
 
@@ -135,8 +136,10 @@ async def command_add_favorite_callback(update: Update, context: ContextTypes.DE
         response = render_to_string("favorite_error.html", context={"error": "account"})
     except BankCard.DoesNotExist:
         response = render_to_string("favorite_error.html", context={"error": "card"})
-    # except Exception:
-    #     response = render_to_string("favorite_error.html", context={"error": "base"})
+    except CustomErrors.ObjectProperties:
+        response = render_to_string("favorite_error.html", context={"error": "base"})
+    except CustomErrors.PhoneError:
+        response = render_to_string("phone_error.html")
     await update.message.reply_text(response)
 
 
@@ -147,24 +150,33 @@ async def command_del_favorite_callback(update: Update, context: ContextTypes.DE
         response = "done"
     except TelegramUser.DoesNotExist:
         response = render_to_string("favorite_error.html", context={"error": "user"})
-    # except Exception:
-    #     response = render_to_string("favorite_error.html", context={"error": "del"})
+    except (CustomErrors.ObjectProperties, ValueError):
+        response = render_to_string("favorite_error.html", context={"error": "del"})
+    except CustomErrors.PhoneError:
+        response = render_to_string("phone_error.html")
     await update.message.reply_text(response)
 
 
 async def command_send_money_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/send_money {payment_sender} {payee} {amount}"""
     try:
-        await send_money(context.args[0], context.args[1], context.args[2], update.message.from_user.id)
+        user = await get_user(update.message.from_user.id)
+        if not user.phone_number:
+            raise CustomErrors.PhoneError
+        await send_money(context.args[0], context.args[1], context.args[2], user)
         response = render_to_string("command_send_money.html", context={"error": ""})
     except IntegrityError:
         response = render_to_string("command_send_money.html", context={"error": "integrity"})
-    except AttributeError:
-        response = render_to_string("command_send_money.html", context={"error": "attribute"})
-    except ValueError:
-        response = render_to_string("command_send_money.html", context={"error": "value"})
-    except (IndexError, TelegramUser.DoesNotExist):
+    except CustomErrors.ObjectProperties:
+        response = render_to_string("command_send_money.html", context={"error": "object"})
+    except CustomErrors.Sender:
+        response = render_to_string("command_send_money.html", context={"error": "sender"})
+    except IndexError:
         response = render_to_string("command_send_money.html", context={"error": "index"})
     except BankAccount.DoesNotExist:
         response = render_to_string("command_send_money.html", context={"error": "account"})
+    except TelegramUser.DoesNotExist:
+        response = render_to_string("register_error.html")
+    except CustomErrors.PhoneError:
+        response = render_to_string("phone_error.html")
     await update.message.reply_text(response)
