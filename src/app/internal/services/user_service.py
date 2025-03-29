@@ -28,7 +28,7 @@ async def add_favorite(chat_id: int, favorite: str) -> None:
         await get_card(favorite)
     elif favorite.isdigit() and len(favorite) == 20:
         await get_account(favorite)
-    elif not favorite.isdigit and len(favorite) < 255:
+    elif not favorite.isdigit() and len(favorite) < 255:
         if favorite[0] == "@":
             favorite = favorite[1::]
         await TelegramUser.objects.aget(username=favorite)
