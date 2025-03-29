@@ -13,7 +13,7 @@ def get_user(request):
         data = {
             i.number: {
                 "balance": i.balance,
-                "cards": {j.number: {"available_balance": j.available_balance} for j in i.bankcard_set.all()},
+                "cards": {"number": j.number for j in i.bankcard_set.all()},
             }
             for i in user.bankaccount_set.all()
         }

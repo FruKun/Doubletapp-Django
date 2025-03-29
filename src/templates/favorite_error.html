@@ -1,0 +1,6 @@
+{%if error == "base" %}U can write existing username or card/account number with command /add_favorite 1234567890123456
+length card number = 16
+length account number = 20
+{%elif error == "del" %} U can write existing username or card/account number with command /del_favorite 1234567890123456
+{%elif error == "user" %} user does not registered
+{%else%}{{error}} does not exist{%endif%}
