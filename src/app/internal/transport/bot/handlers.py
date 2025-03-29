@@ -120,8 +120,6 @@ async def command_favourites_callback(update: Update, context: ContextTypes.DEFA
         )
     except TelegramUser.DoesNotExist:
         response = render_to_string("register_error.html")
-    except CustomErrors.PhoneError:
-        response = render_to_string("phone_error.html")
     await update.message.reply_text(response)
 
 
@@ -138,8 +136,6 @@ async def command_add_favorite_callback(update: Update, context: ContextTypes.DE
         response = render_to_string("favorite_error.html", context={"error": "card"})
     except CustomErrors.ObjectProperties:
         response = render_to_string("favorite_error.html", context={"error": "base"})
-    except CustomErrors.PhoneError:
-        response = render_to_string("phone_error.html")
     await update.message.reply_text(response)
 
 
@@ -152,8 +148,6 @@ async def command_del_favorite_callback(update: Update, context: ContextTypes.DE
         response = render_to_string("favorite_error.html", context={"error": "user"})
     except (CustomErrors.ObjectProperties, ValueError):
         response = render_to_string("favorite_error.html", context={"error": "del"})
-    except CustomErrors.PhoneError:
-        response = render_to_string("phone_error.html")
     await update.message.reply_text(response)
 
 
