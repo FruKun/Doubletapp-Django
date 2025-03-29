@@ -24,18 +24,16 @@ async def set_phone(chat_id: int, number: str, code: str) -> None:
 
 async def add_favorite(chat_id: int, favorite: str) -> None:
     user = await get_user(chat_id)
-    if favorite.isdigit() and not (len(favorite) == 16 or len(favorite) == 20):
-        raise CustomErrors.ObjectProperties
-    elif favorite.isdigit() and len(favorite) == 16:
+    if favorite.isdigit() and len(favorite) == 16:
         await get_card(favorite)
     elif favorite.isdigit() and len(favorite) == 20:
         await get_account(favorite)
-    elif len(favorite) > 255:
-        raise CustomErrors.ObjectProperties
-    else:
+    elif not favorite.isdigit and len(favorite) < 255:
         if favorite[0] == "@":
             favorite = favorite[1::]
-        await get_user(favorite)
+        await TelegramUser.objects.aget(username=favorite)
+    else:
+        raise CustomErrors.ObjectProperties
     user.list_of_favourites.append(favorite)
     user.list_of_favourites = list(set(user.list_of_favourites))
     await user.asave()
