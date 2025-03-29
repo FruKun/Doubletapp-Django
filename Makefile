@@ -1,3 +1,16 @@
+include .env
+all:
+docker-file:=
+ifeq (${ENVIRONMENT},prod)
+	docker-file := -f docker-compose.yml
+endif
+ifeq (${ENVIRONMENT}, test)
+	docker-file := -f docker-compose.yml -f docker-compose-test.yml
+endif
+ifeq (${ENVIRONMENT}, local)
+	docker-file := -f docker-compose.yml -f docker-compose-local.yml
+endif
+
 migrate:
 	python3 manage.py migrate $(if $m, api $m,)
 
@@ -37,20 +50,20 @@ bot:
 	python3 src/manage.py run_bot
 
 build:
-	docker build -t $$IMAGE_APP .
-dev-up:
-	docker compose -f docker-compose.yml -f docker-compose-dev.yml up -d
-dev-down:
-	docker compose -f docker-compose.yml -f docker-compose-dev.yml down
-dev-logs:
-	docker compose -f docker-compose.yml -f docker-compose-dev.yml logs
-up:
-	docker compose up -d
-down:
-	docker compose down
-logs:
-	docker compose logs
-pull:
-	docker image pull $$IMAGE_APP
+	docker compose build
 push:
-	docker image push $$IMAGE_APP
+	docker image push ${IMAGE_NGINX}
+	docker image push ${IMAGE_APP}
+
+pull:
+	docker image pull ${IMAGE_APP}
+	docker image pull ${IMAGE_NGINX}
+
+up-build:
+	docker compose ${docker-file} up -d --build
+up:
+	docker compose ${docker-file} up -d
+down:
+	docker compose ${docker-file} down
+logs:
+	docker compose ${docker-file} logs

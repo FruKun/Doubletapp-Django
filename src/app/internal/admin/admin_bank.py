@@ -11,5 +11,5 @@ class BankAccountAdmin(admin.ModelAdmin):
 
 @admin.register(BankCard)
 class BankCardAdmin(admin.ModelAdmin):
-    list_display = ("number", "account", "available_balance", "expiration_date", "cvv", "created_at")
+    list_display = ("number", "account", "account__balance", "expiration_date", "cvv", "created_at")
     readonly_fields = ("created_at",)

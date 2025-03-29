@@ -7,21 +7,41 @@ services:
       - postgres:/var/lib/postgresql/data
   django-bot:
     image: $IMAGE_APP
+    build: .
+    expose:
+      - $PORT
     environment:
       POSTGRES_HOST: "postgres"
       POSTGRES_PORT: 5432
     env_file:
       - .env
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py run_bot"
+    command: bash -c "python manage.py run_bot"
   django-web:
     image: $IMAGE_APP
-    ports:
-      - "8000:8000"
+    build: .
+    expose:
+      - $PORT
     environment:
       POSTGRES_HOST: "postgres"
       POSTGRES_PORT: 5432
     env_file:
       - .env
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - static:/app/static
+      - media:/app/media
+    command: bash -c "python manage.py migrate && python manage.py collectstatic --no-input && gunicorn config.wsgi --bind 0.0.0.0:8000"
+  nginx:
+    image: $IMAGE_NGINX
+    build: nginx/.
+    ports:
+      - 6000:80
+    env_file:
+      - .env
+    volumes:
+      - static:/src/static
+      - media:/src/media
+
 volumes:
   postgres:
+  static:
+  media:
