@@ -1,7 +1,15 @@
 image: docker:28.0.1-dind
 stages:
+  - test
   - build
   - deploy
+test-job:
+  stage: test
+  script: make test
+  tags:
+    - job:test
+  environment:
+    name: test
 build-job:
   stage: build
   script:

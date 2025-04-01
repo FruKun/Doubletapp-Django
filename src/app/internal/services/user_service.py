@@ -22,8 +22,7 @@ async def set_phone(chat_id: int, number: str, code: str) -> None:
         raise NumberParseException(0, "is not valid number")
 
 
-async def add_favorite(chat_id: int, favorite: str) -> None:
-    user = await get_user(chat_id)
+async def add_favorite(user: TelegramUser, favorite: str) -> None:
     if favorite.isdigit() and len(favorite) == 16:
         await get_card(favorite)
     elif favorite.isdigit() and len(favorite) == 20:
@@ -39,8 +38,7 @@ async def add_favorite(chat_id: int, favorite: str) -> None:
     await user.asave()
 
 
-async def del_favorite(chat_id: int, favorite: str) -> None:
-    user = await get_user(chat_id)
+async def del_favorite(user: TelegramUser, favorite: str) -> None:
     if favorite.isdigit() and not (len(favorite) == 16 or len(favorite) == 20):
         raise CustomErrors.ObjectProperties
     elif len(favorite) > 255:

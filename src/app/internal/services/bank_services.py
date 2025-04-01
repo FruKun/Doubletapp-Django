@@ -9,7 +9,7 @@ from app.internal.services import CustomErrors
 
 
 async def get_account(number: str) -> BankAccount:
-    await BankAccount.objects.aget(number=number)
+    return await BankAccount.objects.aget(number=number)
 
 
 async def get_accounts(user: TelegramUser) -> list[BankAccount]:
@@ -17,7 +17,7 @@ async def get_accounts(user: TelegramUser) -> list[BankAccount]:
 
 
 async def get_card(number: str) -> BankCard:
-    await BankCard.objects.aget(number=number)
+    return await BankCard.objects.aget(number=number)
 
 
 async def get_cards(number: str) -> list[BankCard]:
@@ -28,7 +28,10 @@ async def get_cards(number: str) -> list[BankCard]:
 def send_money(payment_sender: str, payee: str, amount: str, message_sender: TelegramUser) -> None:
     def get_obj(str):
         if not str.isdigit():
-            response = [i for i in BankAccount.objects.prefetch_related("user").filter(user__username=str)][0]
+            try:
+                response = [i for i in BankAccount.objects.prefetch_related("user").filter(user__username=str)][0]
+            except IndexError:
+                raise TelegramUser.DoesNotExist
         elif len(str) == 16:
             response = BankAccount.objects.prefetch_related("user").get(bankcard=str)
         elif len(str) == 20:
