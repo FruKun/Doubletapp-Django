@@ -47,8 +47,9 @@ check_lint:
 	black --check --config pyproject.toml .
 
 test:
+	docker run --env-file .env -p 5432:5432 --name postgres --rm postgres:17.4
 	pytest
-
+	docker kill postgres
 bot:
 	python3 src/manage.py run_bot
 

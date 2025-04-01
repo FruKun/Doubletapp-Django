@@ -8,13 +8,13 @@ test-job:
   image: python:3.13.2-slim
   before_script:
     - apt update
-    - apt install make docker docker-compose-plugin
+    - apt install make docker
     - pip install --no-cache-dir poetry
     - poetry config virtualenvs.create false
     - poetry install --no-interaction --no-cache --no-root --no-directory --with dev
     - cp $DOT_ENV $(pwd)/.env
   script:
-    - make up test down
+    - make test
   tags:
     - job:test
   environment:
@@ -42,4 +42,4 @@ deploy-job:
 before_script:
   - apk add make
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - cp $DOT_ENV $(pwd)/.env
+  - cp $DOT_ENV $(pwd)/.en
