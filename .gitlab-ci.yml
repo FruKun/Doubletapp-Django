@@ -5,6 +5,9 @@ stages:
   - deploy
 test-job:
   stage: test
+  image: python:3.13.2-slim
+  before_script:
+    - pip install pytest
   script: make test
   tags:
     - job:test

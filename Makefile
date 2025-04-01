@@ -47,7 +47,6 @@ check_lint:
 	black --check --config pyproject.toml .
 
 test:
-	pip install pytest
 	pytest
 
 bot:
