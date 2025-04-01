@@ -8,7 +8,7 @@ test-job:
   image: python:3.13.2-slim
   before_script:
     - apt update
-    - apt install make docker
+    - apt install --force-yes make docker
     - pip install --no-cache-dir poetry
     - poetry config virtualenvs.create false
     - poetry install --no-interaction --no-cache --no-root --no-directory --with dev
