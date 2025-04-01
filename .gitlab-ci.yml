@@ -7,10 +7,9 @@ test-job:
   stage: test
   image: python:3.13.2-slim
   before_script:
-    - apk add make
     - pip install pytest
     - cp $DOT_ENV $(pwd)/.env
-  script: make test
+  script: pytest
   tags:
     - job:test
   environment:
