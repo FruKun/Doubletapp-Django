@@ -7,7 +7,8 @@ test-job:
   stage: test
   image: python:3.13.2-slim
   services:
-    - postgres:17.4
+    - name: postgres:17.4
+      alias: postgres db
   before_script:
     - pip install --no-cache-dir poetry
     - poetry config virtualenvs.create false
