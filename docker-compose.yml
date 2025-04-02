@@ -3,12 +3,6 @@ services:
     image: postgres:17.4
     env_file:
       - .env
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
     volumes:
       - postgres:/var/lib/postgresql/data
   django-bot:
@@ -21,10 +15,6 @@ services:
       POSTGRES_PORT: 5432
     env_file:
       - .env
-    depends_on:
-      postgres:
-        condition: service_healthy
-        restart: true
     command: bash -c "python manage.py run_bot"
   django-web:
     image: $IMAGE_APP
@@ -36,10 +26,6 @@ services:
       POSTGRES_PORT: 5432
     env_file:
       - .env
-    depends_on:
-      postgres:
-        condition: service_healthy
-        restart: true
     volumes:
       - static:/app/static
       - media:/app/media

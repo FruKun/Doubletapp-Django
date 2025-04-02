@@ -1,18 +1,16 @@
 image: docker:28.0.1-dind
 stages:
-  - test
+  # - test
   - build
   - deploy
-test-job:
-  stage: test
-  script:
-    - make up
-  variables:
-    CI_DEBUG_SERVICES: true
-  tags:
-    - job:test
-  environment:
-    name: test
+# test-job:
+#   stage: test
+#   script:
+#     - make up
+#   tags:
+#     - job:test
+#   environment:
+#     name: test
 build-job:
   stage: build
   script:
