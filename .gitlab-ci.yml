@@ -6,6 +6,8 @@ stages:
 test-job:
   stage: test
   image: python:3.13.2-slim
+  variables:
+    POSTGRES_HOST: "postgres"
   services:
     - name: postgres:17.4
       alias: postgres db
