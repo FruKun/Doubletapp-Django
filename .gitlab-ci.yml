@@ -14,7 +14,7 @@ test-job:
     - poetry install --no-interaction --no-cache --no-root --no-directory --with dev
     - cp $DOT_ENV $(pwd)/.env
   script:
-    - make test
+    - pytest
   tags:
     - job:test
   environment:
