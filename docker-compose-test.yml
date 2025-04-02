@@ -13,4 +13,4 @@ services:
       POSTGRES_PORT: 5432
     env_file:
       - .env.test
-    command: bash -c "python src/manage.py migrate && pytest"
+    command: bash -c "pytest"
