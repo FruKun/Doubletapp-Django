@@ -5,19 +5,8 @@ stages:
   - deploy
 test-job:
   stage: test
-  image: python:3.13.2-slim
-  variables:
-    POSTGRES_HOST: "postgres"
-  services:
-    - name: postgres:17.4
-      alias: postgres db
-  before_script:
-    - pip install --no-cache-dir poetry
-    - poetry config virtualenvs.create false
-    - poetry install --no-interaction --no-cache --no-root --no-directory --with dev
-    - cp $DOT_ENV $(pwd)/.env
   script:
-    - pytest
+    - make up down
   tags:
     - job:test
   environment:
