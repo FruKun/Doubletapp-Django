@@ -6,7 +6,7 @@ stages:
 test-job:
   stage: test
   script:
-    - make up down
+    - make up
   tags:
     - job:test
   environment:

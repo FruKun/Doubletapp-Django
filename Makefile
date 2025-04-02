@@ -5,7 +5,7 @@ ifeq (${ENVIRONMENT},prod)
 	docker-file := -f docker-compose.yml
 endif
 ifeq (${ENVIRONMENT}, test)
-	docker-file := -f docker-compose.yml -f docker-compose-test.yml
+	docker-file := -f docker-compose-test.yml
 endif
 ifeq (${ENVIRONMENT}, local)
 	docker-file := -f docker-compose.yml -f docker-compose-local.yml
