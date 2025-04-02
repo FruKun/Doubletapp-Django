@@ -8,7 +8,7 @@ test-job:
   script:
     - make up
   variables:
-    CI_DEBUG_SERVICES: trace
+    CI_DEBUG_SERVICES: true
   tags:
     - job:test
   environment:

@@ -15,3 +15,7 @@ def init_bot():
 def test_bot_init(init_bot):
     assert init_bot.bot is not None
     assert len(init_bot.handlers) > 0
+
+
+def test_fail():
+    assert False
