@@ -6,9 +6,9 @@ stages:
 test-job:
   stage: test
   image: python:3.13.2-slim
+  services:
+    - postgres:17.4
   before_script:
-    - apt update
-    - apt install -y make docker
     - pip install --no-cache-dir poetry
     - poetry config virtualenvs.create false
     - poetry install --no-interaction --no-cache --no-root --no-directory --with dev
