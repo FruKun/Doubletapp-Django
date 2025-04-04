@@ -40,6 +40,22 @@ black = "^25.1.0"
 flake8 = "^7.1.2"
 isort = "^6.0.1"
 debugpy = "^1.8.13"
+pytest = "^8.3.5"
+pytest-django = "^4.10.0"
+pytest-asyncio = "^0.26.0"
+
+[tool.pytest.ini_options]
+pythonpath = "src"
+DJANGO_SETTINGS_MODULE = "config.settings"
+testpaths = [
+    "tests",
+]
+addopts = "--reuse-db --create-db --nomigrations"
+markers = [
+    "integration: integration test",
+    "smoke: smoke test",
+    "unit: unit test"
+]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

@@ -18,7 +18,7 @@ class BankCard(models.Model):
         verbose_name_plural = "Bank cards"
         constraints = [
             models.CheckConstraint(
-                check=models.Q(number__length__gte=16),
+                condition=models.Q(number__length__gte=16),
                 name="bankcard_number_length",
             )
         ]
@@ -38,10 +38,10 @@ class BankAccount(models.Model):
         verbose_name_plural = "Bank accounts"
         constraints = [
             models.CheckConstraint(
-                check=models.Q(number__length__gte=20),
+                condition=models.Q(number__length__gte=20),
                 name="bankaccount_number_length",
             ),
-            models.CheckConstraint(check=models.Q(balance__gte=Decimal("0")), name="price_gte_0"),
+            models.CheckConstraint(condition=models.Q(balance__gte=Decimal("0")), name="price_gte_0"),
         ]
 
     def __str__(self):

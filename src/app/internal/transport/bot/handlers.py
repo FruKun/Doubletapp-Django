@@ -1,3 +1,5 @@
+import decimal
+
 from django.conf import settings
 from django.db.utils import IntegrityError
 from django.template.loader import render_to_string
@@ -95,15 +97,20 @@ async def command_cards_callback(update: Update, context: ContextTypes.DEFAULT_T
         user = await get_user(update.message.from_user.id)
         if not user.phone_number:
             raise CustomErrors.PhoneError
-        if context.args:
+        account = await BankAccount.objects.prefetch_related("user").aget(number=context.args[0])
+        if account.user == user:
             cards = await get_cards(context.args[0])
             response = render_to_string("command_cards.html", context={"list": cards})
         else:
-            response = "try again\nexample: /cards 12345"
+            raise CustomErrors.ObjectProperties
+    except IndexError:
+        response = "try again\nexample: /cards 12345"
     except TelegramUser.DoesNotExist:
         response = render_to_string("register_error.html")
     except BankAccount.DoesNotExist:
-        response = "u dont have this account"
+        response = "account does not exist"
+    except CustomErrors.ObjectProperties:
+        response = "its not u account"
     except CustomErrors.PhoneError:
         response = render_to_string("phone_error.html")
     await update.message.reply_text(response)
@@ -126,7 +133,8 @@ async def command_favourites_callback(update: Update, context: ContextTypes.DEFA
 async def command_add_favorite_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/add_favorite"""
     try:
-        await add_favorite(update.message.from_user.id, context.args[0])
+        user = await get_user(update.message.from_user.id)
+        await add_favorite(user, context.args[0])
         response = "done"
     except TelegramUser.DoesNotExist:
         response = render_to_string("favorite_error.html", context={"error": "user"})
@@ -134,7 +142,7 @@ async def command_add_favorite_callback(update: Update, context: ContextTypes.DE
         response = render_to_string("favorite_error.html", context={"error": "account"})
     except BankCard.DoesNotExist:
         response = render_to_string("favorite_error.html", context={"error": "card"})
-    except CustomErrors.ObjectProperties:
+    except (CustomErrors.ObjectProperties, IndexError):
         response = render_to_string("favorite_error.html", context={"error": "base"})
     await update.message.reply_text(response)
 
@@ -142,11 +150,12 @@ async def command_add_favorite_callback(update: Update, context: ContextTypes.DE
 async def command_del_favorite_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """/del_favorite"""
     try:
-        await del_favorite(update.message.from_user.id, context.args[0])
+        user = await get_user(update.message.from_user.id)
+        await del_favorite(user, context.args[0])
         response = "done"
     except TelegramUser.DoesNotExist:
         response = render_to_string("favorite_error.html", context={"error": "user"})
-    except (CustomErrors.ObjectProperties, ValueError):
+    except (CustomErrors.ObjectProperties, IndexError, ValueError):
         response = render_to_string("favorite_error.html", context={"error": "del"})
     await update.message.reply_text(response)
 
@@ -165,8 +174,10 @@ async def command_send_money_callback(update: Update, context: ContextTypes.DEFA
         response = render_to_string("command_send_money.html", context={"error": "object"})
     except CustomErrors.Sender:
         response = render_to_string("command_send_money.html", context={"error": "sender"})
+    except (decimal.InvalidOperation, CustomErrors.AmountMoney):
+        response = render_to_string("command_send_money.html", context={"error": "decimal"})
     except IndexError:
-        response = render_to_string("command_send_money.html", context={"error": "index"})
+        response = render_to_string("command_send_money.html", context={"error": "object"})
     except BankAccount.DoesNotExist:
         response = render_to_string("command_send_money.html", context={"error": "account"})
     except TelegramUser.DoesNotExist:

@@ -23,7 +23,7 @@ env = environ.Env(
     POSTGRES_HOST=(str, "localhost"),
     POSTGRES_PORT=(int, 5432),
 )
-env.read_env(os.path.join(BASE_DIR.parent, ".env"))
+env.read_env(os.path.join(BASE_DIR.parent, ".env.test"))
 TOKEN = env("BOT_SECRET_TOKEN")
 
 # Quick-start development settings - unsuitable for production
