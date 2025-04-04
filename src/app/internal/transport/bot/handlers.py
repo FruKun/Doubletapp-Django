@@ -97,19 +97,18 @@ async def command_cards_callback(update: Update, context: ContextTypes.DEFAULT_T
         user = await get_user(update.message.from_user.id)
         if not user.phone_number:
             raise CustomErrors.PhoneError
-        if context.args:
-            account = await BankAccount.objects.prefetch_related("user").aget(number=context.args[0])
-            if account.user == user:
-                cards = await get_cards(context.args[0])
-                response = render_to_string("command_cards.html", context={"list": cards})
-            else:
-                raise CustomErrors.ObjectProperties
+        account = await BankAccount.objects.prefetch_related("user").aget(number=context.args[0])
+        if account.user == user:
+            cards = await get_cards(context.args[0])
+            response = render_to_string("command_cards.html", context={"list": cards})
         else:
-            response = "try again\nexample: /cards 12345"
+            raise CustomErrors.ObjectProperties
+    except IndexError:
+        response = "try again\nexample: /cards 12345"
     except TelegramUser.DoesNotExist:
         response = render_to_string("register_error.html")
     except BankAccount.DoesNotExist:
-        response = "u dont have this account"
+        response = "account does not exist"
     except CustomErrors.ObjectProperties:
         response = "its not u account"
     except CustomErrors.PhoneError:

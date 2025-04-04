@@ -51,6 +51,11 @@ testpaths = [
     "tests",
 ]
 addopts = "--reuse-db --create-db --nomigrations"
+markers = [
+    "integration: integration test",
+    "smoke: smoke test",
+    "unit: unit test"
+]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

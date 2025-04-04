@@ -5,12 +5,12 @@ services:
       - 5432:5432
     env_file:
       - .env.test
-  test-container:
-    build:
-      dockerfile: ./test.Dockerfile
-    environment:
-      POSTGRES_HOST: "postgres"
-      POSTGRES_PORT: 5432
-    env_file:
-      - .env.test
-    command: bash -c "pytest"
+  # test-container:
+  #   build:
+  #     dockerfile: ./test.Dockerfile
+  #   environment:
+  #     POSTGRES_HOST: "postgres"
+  #     POSTGRES_PORT: 5432
+  #   env_file:
+  #     - .env.test
+  #   command: bash -c "pytest"

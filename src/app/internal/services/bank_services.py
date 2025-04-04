@@ -28,9 +28,8 @@ async def get_cards(number: str) -> list[BankCard]:
 def send_money(payment_sender: str, payee: str, amount: str, message_sender: TelegramUser) -> None:
     def get_obj(str):
         if not str.isdigit():
-            try:
-                response = [i for i in BankAccount.objects.prefetch_related("user").filter(user__username=str)][0]
-            except IndexError:
+            response = BankAccount.objects.prefetch_related("user").filter(user__username=str).first()
+            if not response:
                 raise TelegramUser.DoesNotExist
         elif len(str) == 16:
             response = BankAccount.objects.prefetch_related("user").get(bankcard=str)

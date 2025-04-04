@@ -4,6 +4,8 @@ from telegram.ext import Application
 
 from app.internal.bot import set_handlers
 
+pytestmark = pytest.mark.smoke
+
 
 @pytest.fixture
 def init_bot():
