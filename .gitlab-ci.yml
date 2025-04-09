@@ -5,7 +5,9 @@ stages:
   - deploy
 test-job:
   stage: test
-  image: python:3.13.2
+  image: python:3.13.2-slim
+  before_script:
+    - cp $DOT_ENV $(pwd)/.env
   services:
     - name: postgres:17.4
       alias: postgres
