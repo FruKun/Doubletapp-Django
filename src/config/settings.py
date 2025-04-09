@@ -23,7 +23,7 @@ env = environ.Env(
     POSTGRES_HOST=(str, "localhost"),
     POSTGRES_PORT=(int, 5432),
 )
-env.read_env(os.path.join(BASE_DIR.parent, ".env.test"))
+env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 TOKEN = env("BOT_SECRET_TOKEN")
 
 # Quick-start development settings - unsuitable for production
@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_extensions",
     "app.apps.AppConfig",
 ]
 

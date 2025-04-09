@@ -11,6 +11,7 @@ from app.internal.models.bank_data import BankAccount, BankCard
 from app.internal.models.user_data import TelegramUser
 from app.internal.services import CustomErrors
 from app.internal.services.bank_services import get_accounts, get_cards, send_money
+from app.internal.services.history_service import account_history, all_usernames
 from app.internal.services.user_service import add_favorite, del_favorite, get_user, save_user, set_phone
 
 
@@ -184,4 +185,48 @@ async def command_send_money_callback(update: Update, context: ContextTypes.DEFA
         response = render_to_string("register_error.html")
     except CustomErrors.PhoneError:
         response = render_to_string("phone_error.html")
+    await update.message.reply_text(response)
+
+
+async def command_account_history_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/account_history {account_number}"""
+    try:
+        user = await get_user(update.message.from_user.id)
+        if not user.phone_number:
+            raise CustomErrors.PhoneError
+        history_list = await account_history(user, context.args[0])
+        response = render_to_string("account_history.html", context={"history": history_list, "self": context.args[0]})
+    except CustomErrors.PhoneError:
+        response = render_to_string("phone_error.html")
+    except TelegramUser.DoesNotExist:
+        response = render_to_string("register_error.html")
+    except IndexError:
+        response = "/account_history {u account number}"
+    except BankAccount.DoesNotExist:
+        response = "account does not exist"
+    except CustomErrors.Sender:
+        response = "its not u account"
+    except CustomErrors.ObjectProperties:
+        response = "its not a account"
+    await update.message.reply_text(response)
+
+
+async def command_all_users_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/all_users"""
+    try:
+        user = await get_user(update.message.from_user.id)
+        if not user.phone_number:
+            raise CustomErrors.PhoneError
+        user_list = await all_usernames(user)
+        response = render_to_string("command_all_users.html", context={"list": user_list})
+    except CustomErrors.PhoneError:
+        response = render_to_string("phone_error.html")
+    except TelegramUser.DoesNotExist:
+        response = render_to_string("register_error.html")
+    except (IndexError, KeyError):
+        response = render_to_string("command_all_users.html")
+    except CustomErrors.Sender:
+        response = "its not u account"
+    except CustomErrors.ObjectProperties:
+        response = "its not a account"
     await update.message.reply_text(response)

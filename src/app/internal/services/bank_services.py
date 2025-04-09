@@ -2,8 +2,10 @@ from decimal import Decimal
 
 from asgiref.sync import sync_to_async
 from django.db import transaction
+from django.db.models import F
 
 from app.internal.models.bank_data import BankAccount, BankCard
+from app.internal.models.history_data import TransactionHistory
 from app.internal.models.user_data import TelegramUser
 from app.internal.services import CustomErrors
 
@@ -47,7 +49,8 @@ def send_money(payment_sender: str, payee: str, amount: str, message_sender: Tel
         raise CustomErrors.Sender
     payee = get_obj(payee)
     with transaction.atomic():
-        payment_sender.balance -= amount
-        payee.balance += amount
+        payment_sender.balance = F("balance") - amount
+        payee.balance = F("balance") + amount
         payment_sender.save()
         payee.save()
+        TransactionHistory.objects.create(from_account=payment_sender, to_account=payee, amount_money=amount)
