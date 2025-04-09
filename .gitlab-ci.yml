@@ -1,16 +1,29 @@
-image: docker:28.0.1-dind
+image: docker:28.0.1
 stages:
-  # - test
+  - test
   - build
   - deploy
-# test-job:
-#   stage: test
-#   script:
-#     - make up
-#   tags:
-#     - job:test
-#   environment:
-#     name: test
+test-job:
+  stage: test
+  image: python:3.13.2
+  services:
+    - name: postgres:17.4
+      alias: postgres
+  script:
+    - pip install --no-cache-dir poetry
+    - poetry config virtualenvs.create false
+    - poetry install --no-interaction --no-cache --no-root --no-directory --with dev
+    - pytest
+  variables:
+    POSTGRES_HOST: postgres
+    POSTGRES_PORT: 5432
+    POSTGRES_DB: test
+    POSTGRES_USER: test_user
+    POSTGRES_PASSWORD: test
+  tags:
+    - job:test
+  environment:
+    name: test
 build-job:
   stage: build
   script:
