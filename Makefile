@@ -5,7 +5,7 @@ ifeq (${ENVIRONMENT},prod)
 	docker-file := -f docker-compose.yml
 endif
 ifeq (${ENVIRONMENT}, test)
-	docker-file := -f docker-compose.yml -f docker-compose-test.yml
+	docker-file := -f docker-compose-test.yml
 endif
 ifeq (${ENVIRONMENT}, local)
 	docker-file := -f docker-compose.yml -f docker-compose-local.yml
@@ -46,11 +46,14 @@ check_lint:
 	flake8 --config setup.cfg
 	black --check --config pyproject.toml .
 
+test:
+	pytest
 bot:
 	python3 src/manage.py run_bot
 
 build:
 	docker compose build
+
 push:
 	docker image push ${IMAGE_NGINX}
 	docker image push ${IMAGE_APP}
@@ -61,9 +64,12 @@ pull:
 
 up-build:
 	docker compose ${docker-file} up -d --build
+
 up:
 	docker compose ${docker-file} up -d
+
 down:
 	docker compose ${docker-file} down
+
 logs:
 	docker compose ${docker-file} logs
