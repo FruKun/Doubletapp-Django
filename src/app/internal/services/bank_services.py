@@ -30,13 +30,13 @@ async def get_cards(number: str) -> list[BankCard]:
 def send_money(payment_sender: str, payee: str, amount: str, message_sender: TelegramUser) -> None:
     def get_obj(str):
         if not str.isdigit():
-            response = BankAccount.objects.prefetch_related("user").filter(user__username=str).first()
+            response = BankAccount.objects.select_related("user").filter(user__username=str).first()
             if not response:
                 raise TelegramUser.DoesNotExist
         elif len(str) == 16:
-            response = BankAccount.objects.prefetch_related("user").get(bankcard=str)
+            response = BankAccount.objects.select_related("user").get(bankcard=str)
         elif len(str) == 20:
-            response = BankAccount.objects.prefetch_related("user").get(number=str)
+            response = BankAccount.objects.select_related("user").get(number=str)
         else:
             raise CustomErrors.ObjectProperties
         return response

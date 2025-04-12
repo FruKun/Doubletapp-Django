@@ -1,8 +1,8 @@
 History:
-{% for i in history %}Transaction:
-  {% if self == i.from_account %}sent{%else%}accepted{%endif%}
-  from: {{i.from_account}}
-  to: {{i.to_account}}
-  amount money: {{i.amount_money}}
-  {{i.date}}, {{i.time}}
+{% for history in histories %}Transaction:
+  type: {% if self == history.from_account__number %}sent{%else%}accepted{%endif%}
+  from: {{ history.from_account__number}}
+  to: {{history.to_account__number}}
+  amount money: {{history.amount_money}}
+  {{history.created_at}}
 {%endfor%}

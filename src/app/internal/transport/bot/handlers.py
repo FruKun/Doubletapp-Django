@@ -195,7 +195,9 @@ async def command_account_history_callback(update: Update, context: ContextTypes
         if not user.phone_number:
             raise CustomErrors.PhoneError
         history_list = await account_history(user, context.args[0])
-        response = render_to_string("account_history.html", context={"history": history_list, "self": context.args[0]})
+        response = render_to_string(
+            "account_history.html", context={"histories": history_list, "self": context.args[0]}
+        )
     except CustomErrors.PhoneError:
         response = render_to_string("phone_error.html")
     except TelegramUser.DoesNotExist:

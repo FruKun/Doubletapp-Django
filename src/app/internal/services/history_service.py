@@ -9,14 +9,14 @@ from app.internal.services import CustomErrors
 async def account_history(user: TelegramUser, account_number: str) -> list[TransactionHistory]:
     if not account_number.isdigit() or not len(account_number) == 20:
         raise CustomErrors.ObjectProperties
-    account = await BankAccount.objects.prefetch_related("user").aget(number=account_number)
+    account = await BankAccount.objects.select_related("user").aget(number=account_number)
     if user != account.user:
         raise CustomErrors.Sender
     return [
         i
-        async for i in TransactionHistory.objects.filter(Q(from_account=account_number) | Q(to_account=account_number))[
-            :5
-        ]
+        async for i in TransactionHistory.objects.values(
+            "from_account__number", "to_account__number", "amount_money", "created_at"
+        ).filter(Q(from_account=account) | Q(to_account=account))[:5]
     ]
 
 
