@@ -44,11 +44,6 @@ def setup_user():
 
 
 @pytest.fixture
-def client():
-    return Client()
-
-
-@pytest.fixture
 def update():
     update = AsyncMock()
     update.message = AsyncMock()
