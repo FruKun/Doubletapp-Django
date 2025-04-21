@@ -10,8 +10,10 @@ from telegram.ext import (
 )
 
 from app.internal.transport.bot.handlers import (
+    command_account_history_callback,
     command_accounts_callback,
     command_add_favorite_callback,
+    command_all_users_callback,
     command_cards_callback,
     command_del_favorite_callback,
     command_favourites_callback,
@@ -38,13 +40,15 @@ async def post_init(application: Application) -> None:
             ("help", "bot help"),
             ("set_phone", "set phone"),
             ("me", "get info"),
+            ("give_me_link", "get url for info"),
             ("accounts", "get bank accounts"),
             ("cards", "get bank cards"),
             ("favourites", "list of favourites"),
             ("add_favorite", "add favorite choice"),
             ("del_favorite", "del favorite choice"),
             ("send_money", "send money from u account to another"),
-            ("give_me_link", "get url for info"),
+            ("account_history", "transaction history"),
+            ("all_users", "all usernames"),
         ]
     )
 
@@ -61,6 +65,8 @@ def set_handlers(application: Application) -> None:
     application.add_handler(CommandHandler("del_favorite", command_del_favorite_callback))
     application.add_handler(CommandHandler("send_money", command_send_money_callback))
     application.add_handler(CommandHandler("give_me_link", command_me_link_callback))
+    application.add_handler(CommandHandler("account_history", command_account_history_callback))
+    application.add_handler(CommandHandler("all_users", command_all_users_callback))
     application.add_handler(MessageHandler(filters.TEXT, message_callback))
 
 
