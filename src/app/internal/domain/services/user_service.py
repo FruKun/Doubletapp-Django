@@ -1,8 +1,8 @@
 from phonenumbers import NumberParseException, format_out_of_country_calling_number, is_valid_number, parse
 
-from app.internal.models.user_data import TelegramUser
-from app.internal.services import CustomErrors
-from app.internal.services.bank_services import get_account, get_card
+from app.internal.db.models.user_data import TelegramUser
+from app.internal.domain.services import CustomErrors
+from app.internal.domain.services.bank_services import get_account, get_card
 
 
 async def get_user(chat_id: int) -> TelegramUser:

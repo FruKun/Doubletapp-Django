@@ -2,10 +2,11 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import AdminUserCreationForm, UserChangeForm
 
-from app.internal.models.user_data import TelegramUser
+from app.internal.db.models.user_data import TelegramUser
 
 
 class CustomUserCreationForm(AdminUserCreationForm):
+
     class Meta:
         model = TelegramUser
         fields = ("id", "username", "full_name")
@@ -29,12 +30,12 @@ class TelegramUserAdmin(UserAdmin):
             None,
             {"fields": ["id", "username", "full_name", "phone_number", "list_of_favourites", "password", "created_at"]},
         ),
-        ("Permissions", {"fields": ["is_active", "is_superuser"]}),
+        ("Permissions", {"fields": ["is_active", "is_superuser", "is_staff"]}),
     ]
     add_fieldsets = [
         (
             None,
             {"fields": ["id", "username", "full_name", "phone_number", "list_of_favourites", "password1", "password2"]},
         ),
-        ("Permissions", {"fields": ["is_active", "is_superuser"]}),
+        ("Permissions", {"fields": ["is_active", "is_superuser", "is_staff"]}),
     ]

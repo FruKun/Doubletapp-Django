@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.internal.models.history_data import TransactionHistory
+from app.internal.db.models.history_data import TransactionHistory
 
 
 @admin.register(TransactionHistory)

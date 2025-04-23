@@ -7,12 +7,12 @@ from phonenumbers import NumberParseException
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from app.internal.models.bank_data import BankAccount, BankCard
-from app.internal.models.user_data import TelegramUser
-from app.internal.services import CustomErrors
-from app.internal.services.bank_services import get_accounts, get_cards, send_money
-from app.internal.services.history_service import account_history, all_usernames
-from app.internal.services.user_service import add_favorite, del_favorite, get_user, save_user, set_phone
+from app.internal.db.models.bank_data import BankAccount, BankCard
+from app.internal.db.models.user_data import TelegramUser
+from app.internal.domain.services import CustomErrors
+from app.internal.domain.services.bank_services import get_accounts, get_cards, send_money
+from app.internal.domain.services.history_service import account_history, all_usernames
+from app.internal.domain.services.user_service import add_favorite, del_favorite, get_user, save_user, set_phone
 
 
 async def command_start_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

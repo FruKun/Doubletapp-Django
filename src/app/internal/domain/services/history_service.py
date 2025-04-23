@@ -1,9 +1,9 @@
 from django.db.models import Q
 
-from app.internal.models.bank_data import BankAccount
-from app.internal.models.history_data import TransactionHistory
-from app.internal.models.user_data import TelegramUser
-from app.internal.services import CustomErrors
+from app.internal.db.models.bank_data import BankAccount
+from app.internal.db.models.history_data import TransactionHistory
+from app.internal.db.models.user_data import TelegramUser
+from app.internal.domain.services import CustomErrors
 
 
 async def account_history(user: TelegramUser, account_number: str) -> list[TransactionHistory]:

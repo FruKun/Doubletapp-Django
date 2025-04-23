@@ -4,10 +4,10 @@ from asgiref.sync import sync_to_async
 from django.db import transaction
 from django.db.models import F
 
-from app.internal.models.bank_data import BankAccount, BankCard
-from app.internal.models.history_data import TransactionHistory
-from app.internal.models.user_data import TelegramUser
-from app.internal.services import CustomErrors
+from app.internal.db.models.bank_data import BankAccount, BankCard
+from app.internal.db.models.history_data import TransactionHistory
+from app.internal.db.models.user_data import TelegramUser
+from app.internal.domain.services import CustomErrors
 
 
 async def get_account(number: str) -> BankAccount:

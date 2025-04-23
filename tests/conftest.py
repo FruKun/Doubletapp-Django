@@ -1,10 +1,19 @@
+from typing import Any
 from unittest.mock import AsyncMock
 
 import pytest
-from django.test import Client
+from ninja_extra.testing import TestClient
+from ninja_jwt.tokens import RefreshToken
 
-from app.internal.models.bank_data import BankAccount, BankCard
-from app.internal.models.user_data import TelegramUser
+from app.internal.db.models.bank_data import BankAccount, BankCard
+from app.internal.db.models.user_data import TelegramUser
+
+
+class AuthorizedClient(TestClient):
+    def request(self, method, path, data={}, json=None, **request_params: Any):
+        headers = {"Authorization": f"Bearer {RefreshToken.for_user(TelegramUser.objects.get(id=0)).access_token}"}
+        request_params["headers"] = headers
+        return super().request(method, path, data, json, **request_params)
 
 
 @pytest.fixture
@@ -41,6 +50,11 @@ def setup_user():
         id=100, username="test100", full_name="test wphone", phone_number="8 (800) 555-35-45", list_of_favourites=[]
     )
     TelegramUser.objects.create(id=200, username="test200", full_name="test wphone", list_of_favourites=[])
+
+
+@pytest.fixture
+def setup_admin():
+    TelegramUser.objects.create(id=0, username="admin", full_name="admin")
 
 
 @pytest.fixture
