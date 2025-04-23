@@ -5,7 +5,7 @@ stages:
   - deploy
 test-job:
   stage: test
-  image: python:3.13.2-slim
+  image: python:3.13.3-slim
   before_script:
     - cp $DOT_ENV $(pwd)/.env
   services:
