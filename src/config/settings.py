@@ -54,9 +54,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
-    "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
+    "ninja",
+    "ninja_extra",
+    "ninja_jwt",
+    "ninja_jwt.token_blacklist",
     "app.apps.AppConfig",
 ]
 
@@ -130,11 +131,11 @@ REST_FRAMEWORK = {
 }
 
 
-SIMPLE_JWT = {
+NINJA_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
-    # "TOKEN_OBTAIN_SERIALIZER": "app.internal.serializers.CustomTokenObtainPairSerializer",
+    "BLACKLIST_AFTER_ROTATION": True,
 }
 
 # Internationalization

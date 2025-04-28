@@ -3,6 +3,7 @@ from django.conf import settings
 from telegram.ext import Application
 
 from app.internal.bot import set_handlers
+from app.internal.presentation.bot.handlers import BotHandlers
 
 pytestmark = pytest.mark.smoke
 
@@ -10,7 +11,7 @@ pytestmark = pytest.mark.smoke
 @pytest.fixture
 def init_bot():
     application = Application.builder().token(settings.TOKEN).build()
-    set_handlers(application)
+    set_handlers(application, BotHandlers())
     yield application
 
 
