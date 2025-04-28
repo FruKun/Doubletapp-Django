@@ -41,11 +41,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="telegramuser",
-            name="is_admin",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
-            model_name="telegramuser",
             name="is_superuser",
             field=models.BooleanField(
                 default=False,

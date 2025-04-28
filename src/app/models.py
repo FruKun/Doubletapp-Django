@@ -1,2 +1,2 @@
-from app.internal.models.bank_data import BankAccount, BankCard
-from app.internal.models.user_data import TelegramUser
+from app.internal.db.models.bank_data import BankAccount, BankCard
+from app.internal.db.models.user_data import TelegramUser
