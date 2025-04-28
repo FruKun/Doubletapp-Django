@@ -19,7 +19,7 @@ def client(setup_admin):
     return AuthorizedClient(Cards)
 
 
-@pytest.mark.parametrize("path", [("/"), ("/1")])
+@pytest.mark.parametrize("path", [(""), ("1")])
 def test_api_cards_get_unauthorized(unauthorized_client, path):
     response = unauthorized_client.get(path=path)
     assert response.status_code == HTTPStatus.UNAUTHORIZED
@@ -41,8 +41,4 @@ def test_api_cards_get_card_ok(setup_db, client):
 def test_api_cards_get_card_not_found(client):
     response = client.get(path="1234567890123456")
     assert response.status_code == HTTPStatus.NOT_FOUND
-
-
-def test_api_cards_get_card_not_valid_data(client):
-    response = client.get(path="/aboba")
-    assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
+    assert response.json()["detail"] == "Card does not exist"

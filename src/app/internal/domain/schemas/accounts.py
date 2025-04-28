@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from ninja import ModelSchema, Schema
 
 from app.internal.db.models.bank_data import BankAccount
@@ -17,4 +19,4 @@ class MessageAccountSchema(Schema):
 class PostBankAccountSchema(Schema):
     number: str
     user_id: int
-    balance: int
+    balance: Decimal

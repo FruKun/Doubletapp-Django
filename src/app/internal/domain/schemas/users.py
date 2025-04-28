@@ -10,11 +10,22 @@ class TelegramUserSchema(ModelSchema):
         fields_optional = ["full_name", "phone_number", "list_of_favourites"]
 
 
+class PostTelegramUserSchema(Schema):
+    id: int
+    username: str
+    full_name: str
+
+
+class PutTelegramUserSchema(Schema):
+    username: str
+    full_name: str
+
+
 class MessageUserSchema(Schema):
     message: str
     id: int
     username: str
 
 
-class DeleteUserSchema(Schema):
-    message: str
+class DeleteSchema(Schema):
+    pass

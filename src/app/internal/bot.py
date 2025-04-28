@@ -9,21 +9,7 @@ from telegram.ext import (
     filters,
 )
 
-from app.internal.presentation.bot.handlers import (  # command_me_link_callback,
-    command_account_history_callback,
-    command_accounts_callback,
-    command_add_favorite_callback,
-    command_all_users_callback,
-    command_cards_callback,
-    command_del_favorite_callback,
-    command_favourites_callback,
-    command_help_callback,
-    command_me_callback,
-    command_send_money_callback,
-    command_set_phone_callback,
-    command_start_callback,
-    message_callback,
-)
+from app.internal.presentation.bot.handlers import BotHandlers
 
 # Enable logging
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -52,26 +38,26 @@ async def post_init(application: Application) -> None:
     )
 
 
-def set_handlers(application: Application) -> None:
-    application.add_handler(CommandHandler("start", command_start_callback))
-    application.add_handler(CommandHandler("help", command_help_callback))
-    application.add_handler(CommandHandler("set_phone", command_set_phone_callback))
-    application.add_handler(CommandHandler("me", command_me_callback))
-    application.add_handler(CommandHandler("accounts", command_accounts_callback))
-    application.add_handler(CommandHandler("cards", command_cards_callback))
-    application.add_handler(CommandHandler("favourites", command_favourites_callback))
-    application.add_handler(CommandHandler("add_favorite", command_add_favorite_callback))
-    application.add_handler(CommandHandler("del_favorite", command_del_favorite_callback))
-    application.add_handler(CommandHandler("send_money", command_send_money_callback))
-    # application.add_handler(CommandHandler("give_me_link", command_me_link_callback))
-    application.add_handler(CommandHandler("account_history", command_account_history_callback))
-    application.add_handler(CommandHandler("all_users", command_all_users_callback))
-    application.add_handler(MessageHandler(filters.TEXT, message_callback))
+def set_handlers(application: Application, botHandlers: BotHandlers) -> None:
+    application.add_handler(CommandHandler("start", botHandlers.command_start_callback))
+    application.add_handler(CommandHandler("help", botHandlers.command_help_callback))
+    application.add_handler(CommandHandler("set_phone", botHandlers.command_set_phone_callback))
+    application.add_handler(CommandHandler("me", botHandlers.command_me_callback))
+    application.add_handler(CommandHandler("accounts", botHandlers.command_accounts_callback))
+    application.add_handler(CommandHandler("cards", botHandlers.command_cards_callback))
+    application.add_handler(CommandHandler("favourites", botHandlers.command_favourites_callback))
+    application.add_handler(CommandHandler("add_favorite", botHandlers.command_add_favorite_callback))
+    application.add_handler(CommandHandler("del_favorite", botHandlers.command_del_favorite_callback))
+    application.add_handler(CommandHandler("send_money", botHandlers.command_send_money_callback))
+    # application.add_handler(CommandHandler("give_me_link", botHandlers.command_me_link_callback))
+    application.add_handler(CommandHandler("account_history", botHandlers.command_account_history_callback))
+    application.add_handler(CommandHandler("all_users", botHandlers.command_all_users_callback))
+    application.add_handler(MessageHandler(filters.TEXT, botHandlers.message_callback))
 
 
 def run_bot() -> None:
     application = Application.builder().token(settings.TOKEN).post_init(post_init).build()
-    set_handlers(application)
+    set_handlers(application, BotHandlers())
     if settings.DEBUG:
         application.run_polling(allowed_updates=Update.ALL_TYPES)
     else:

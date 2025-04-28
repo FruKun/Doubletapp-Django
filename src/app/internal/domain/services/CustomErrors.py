@@ -10,5 +10,5 @@ class Sender(Exception):
     pass
 
 
-class ObjectProperties(Exception):
+class InvalidFieldValue(Exception):
     pass

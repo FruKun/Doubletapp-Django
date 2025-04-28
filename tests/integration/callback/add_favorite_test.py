@@ -2,9 +2,7 @@ import pytest
 from django.template.loader import render_to_string
 
 from app.internal.db.models.user_data import TelegramUser
-from app.internal.presentation.bot.handlers import (
-    command_add_favorite_callback,
-)
+from app.internal.presentation.bot.handlers import BotHandlers
 
 pytestmark = [pytest.mark.django_db(transaction=True), pytest.mark.asyncio, pytest.mark.integration]
 
@@ -41,7 +39,7 @@ async def test_command_add_favorite_callback(
     update.message.from_user.username = username
     update.message.from_user.full_name = full_name
     context.args = args
-    await command_add_favorite_callback(update, context)
+    await BotHandlers().command_add_favorite_callback(update, context)
     update.message.reply_text.assert_called_with(expected)
     if expected == "done":
         user = await TelegramUser.objects.aget(id=id)
@@ -75,5 +73,5 @@ async def test_command_add_favorite_callback_no_register(update, context, id, ar
 
     update.message.from_user.id = id
     context.args = args
-    await command_add_favorite_callback(update, context)
+    await BotHandlers().command_add_favorite_callback(update, context)
     update.message.reply_text.assert_called_with(render_to_string("favorite_error.html", context={"error": "user"}))

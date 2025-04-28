@@ -2,9 +2,7 @@ import pytest
 from django.conf import settings
 from django.template.loader import render_to_string
 
-from app.internal.presentation.bot.handlers import (
-    command_me_link_callback,
-)
+from app.internal.presentation.bot.handlers import BotHandlers
 
 pytestmark = [pytest.mark.django_db(transaction=True), pytest.mark.asyncio, pytest.mark.integration]
 
@@ -25,5 +23,5 @@ async def test_command_me_link_callback(update, context, id, username, full_name
     update.message.from_user.full_name = full_name
     context.args = args
 
-    await command_me_link_callback(update, context)
+    await BotHandlers().command_me_link_callback(update, context)
     update.message.reply_text.assert_called_with(expected)

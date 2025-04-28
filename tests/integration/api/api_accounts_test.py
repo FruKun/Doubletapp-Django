@@ -20,7 +20,7 @@ def client(setup_admin):
     return AuthorizedClient(Accounts)
 
 
-@pytest.mark.parametrize("path", [("/"), ("/1")])
+@pytest.mark.parametrize("path", [(""), ("1")])
 def test_api_accounts_get_unauthorized(unauthorized_client, path):
     response = unauthorized_client.get(path=path)
     assert response.status_code == HTTPStatus.UNAUTHORIZED
@@ -45,13 +45,9 @@ def test_api_accounts_get_account_ok(setup_db, client):
 
 
 def test_api_accounts_get_account_not_found(client):
-    response = client.get(path="/100")
+    response = client.get(path="100")
     assert response.status_code == HTTPStatus.NOT_FOUND
-
-
-def test_api_accounts_get_account_not_valid_data(client):
-    response = client.get(path="/aboba")
-    assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
+    assert response.json()["detail"] == "Account does not exist"
 
 
 def test_api_accounts_post_ok_created(setup_db, client):
@@ -74,13 +70,16 @@ def test_api_accounts_post_ok_exist(setup_db, client):
 def test_api_accounts_post_not_enough_data(client):
     response = client.post(path="", json={"number": "12345678901234567890", "balance": 1234})
     assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
+    assert response.json()["detail"][0]["msg"] == "Field required"
 
 
 def test_api_accounts_post_not_valid_data(client):
     response = client.post(path="", json={"number": 123})
     assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
+    assert response.json()["detail"][0]["msg"] == "Input should be a valid string"
 
 
 def test_api_accounts_post_no_data(client):
     response = client.post(path="")
     assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
+    assert response.json()["detail"][0]["msg"] == "Field required"

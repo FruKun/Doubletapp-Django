@@ -24,10 +24,15 @@ class TokenException(APIException):
 
 
 class RefreshRequiredException(APIException):
-    status_code = HTTPStatus.BAD_REQUEST
+    status_code = HTTPStatus.UNPROCESSABLE_CONTENT
     default_detail = "refresh required"
 
 
 class IntegrityException(APIException):
     status_code = HTTPStatus.BAD_REQUEST
     default_detail = "db error"
+
+
+class ProtectedDeleteException(APIException):
+    status_code = HTTPStatus.UNPROCESSABLE_CONTENT
+    default_detail = "cant delete it because it has protected child content"

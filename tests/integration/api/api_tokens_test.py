@@ -17,7 +17,7 @@ def client():
 
 
 def test_api_tokens_login(setup_user, client):
-    response = client.post(path="/login/", json={"id": 100})
+    response = client.post(path="login/", json={"id": 100})
     print(response.json())
     assert response.status_code == HTTPStatus.OK
     assert "access" in response.json()
@@ -25,60 +25,67 @@ def test_api_tokens_login(setup_user, client):
 
 
 def test_api_tokens_login_not_found(client):
-    response = client.post(path="/login/", json={"id": 100})
+    response = client.post(path="login/", json={"id": 100})
     assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json()["detail"] == "User does not exist"
 
 
 def test_api_tokens_login_not_valid_data(client):
-    response = client.post("/login/", json={"id": "aboba"})
+    response = client.post("login/", json={"id": "aboba"})
     assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
+    assert (
+        response.json()["detail"][0]["msg"] == "Input should be a valid integer, unable to parse string as an integer"
+    )
 
 
 def test_api_tokens_login_no_data(client):
-    response = client.post("/login/")
+    response = client.post("login/")
     assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
+    assert response.json()["detail"][0]["msg"] == "Field required"
 
 
 def test_api_tokens_login_not_valid_method(client):
-    response = client.get("/login/")
+    response = client.get("login/")
     assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
 
 
 def test_api_tokens_refresh_ok(setup_user, client):
     user = TelegramUser.objects.get(id="100")
     refresh = RefreshToken.for_user(user)
-    response = client.post("/refresh/", json={"refresh": str(refresh)})
+    response = client.post("refresh/", json={"refresh": str(refresh)})
     assert response.status_code == HTTPStatus.OK
     assert "access" in response.json()
 
 
 def test_api_tokens_refresh_not_valid_data(client):
-    response = client.post("/refresh/", json={"refresh": "refresh"})
+    response = client.post("refresh/", json={"refresh": "refresh"})
     assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
+    assert response.json()["detail"] == "token invalid or expired"
 
 
 def test_api_tokens_refresh_no_refresh(client):
-    response = client.post("/refresh/", json={"refresh": ""})
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    response = client.post("refresh/", json={"refresh": ""})
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
+    assert response.json()["detail"] == "refresh required"
 
 
 def test_api_tokens_refresh_no_data(client):
-    response = client.post("/refresh/")
+    response = client.post("refresh/")
     assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
+    assert response.json()["detail"][0]["msg"] == "Field required"
 
 
 def test_api_tokens_refresh_expired(setup_user, client):
     with freeze_time("2025-01-01 12:00:00"):
         user = TelegramUser.objects.get(id="100")
         refresh = RefreshToken.for_user(user)
-        response = client.post("/refresh/", json={"refresh": str(refresh)})
-        print(response.json())
+        response = client.post("refresh/", json={"refresh": str(refresh)})
     with freeze_time("2025-03-01 12:00:00"):
-        response = client.post("/refresh/", json={"refresh": str(refresh)})
-        print(response.json())
+        response = client.post("refresh/", json={"refresh": str(refresh)})
     assert response.status_code == HTTPStatus.UNPROCESSABLE_CONTENT
+    assert response.json()["detail"] == "token invalid or expired"
 
 
 def test_api_tokens_refresh_not_valid_method(client):
-    response = client.get("/refresh/")
+    response = client.get("refresh/")
     assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED

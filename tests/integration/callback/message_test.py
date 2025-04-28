@@ -1,9 +1,7 @@
 import pytest
 from django.template.loader import render_to_string
 
-from app.internal.presentation.bot.handlers import (
-    message_callback,
-)
+from app.internal.presentation.bot.handlers import BotHandlers
 
 pytestmark = [pytest.mark.django_db(transaction=True), pytest.mark.asyncio, pytest.mark.integration]
 
@@ -20,5 +18,5 @@ async def test_message_callback(update, context, id, username, full_name, args):
     update.message.from_user.full_name = full_name
     context.args = args
 
-    await message_callback(update, context)
+    await BotHandlers().message_callback(update, context)
     update.message.reply_html.assert_called_with(render_to_string("command_start.html"))

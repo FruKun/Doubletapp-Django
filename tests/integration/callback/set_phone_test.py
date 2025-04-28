@@ -1,9 +1,7 @@
 import pytest
 
 from app.internal.db.models.user_data import TelegramUser
-from app.internal.presentation.bot.handlers import (
-    command_set_phone_callback,
-)
+from app.internal.presentation.bot.handlers import BotHandlers
 
 pytestmark = [pytest.mark.django_db(transaction=True), pytest.mark.asyncio, pytest.mark.integration]
 
@@ -28,7 +26,7 @@ async def test_command_set_phone_callback(
     update.message.from_user.username = username
     update.message.from_user.full_name = full_name
     context.args = args
-    await command_set_phone_callback(update, context)
+    await BotHandlers().command_set_phone_callback(update, context)
     update.message.reply_text.assert_called_with(expected)
     user = await TelegramUser.objects.aget(id=100)
     assert user.phone_number == expected2

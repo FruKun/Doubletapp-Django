@@ -1,9 +1,7 @@
 import pytest
 from django.template.loader import render_to_string
 
-from app.internal.presentation.bot.handlers import (
-    command_account_history_callback,
-)
+from app.internal.presentation.bot.handlers import BotHandlers
 
 pytestmark = [pytest.mark.django_db(transaction=True), pytest.mark.asyncio, pytest.mark.integration]
 
@@ -26,7 +24,7 @@ pytestmark = [pytest.mark.django_db(transaction=True), pytest.mark.asyncio, pyte
 async def test_command_account_history_user_error(update, context, id, args, expected, setup_user):
     update.message.from_user.id = id
     context.args = args
-    await command_account_history_callback(update, context)
+    await BotHandlers().command_account_history_callback(update, context)
     update.message.reply_text.assert_called_with(expected)
 
 
@@ -53,5 +51,5 @@ async def test_command_account_history_user_error(update, context, id, args, exp
 async def test_command_account_history(update, context, id, username, full_name, args, expected, setup_db):
     update.message.from_user.id = id
     context.args = args
-    await command_account_history_callback(update, context)
+    await BotHandlers().command_account_history_callback(update, context)
     update.message.reply_text.assert_called_with(expected)

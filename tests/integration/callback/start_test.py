@@ -2,9 +2,7 @@ import pytest
 from django.template.loader import render_to_string
 
 from app.internal.db.models.user_data import TelegramUser
-from app.internal.presentation.bot.handlers import (
-    command_start_callback,
-)
+from app.internal.presentation.bot.handlers import BotHandlers
 
 pytestmark = [pytest.mark.django_db(transaction=True), pytest.mark.asyncio, pytest.mark.integration]
 
@@ -18,7 +16,7 @@ async def test_command_start_callback(update, context, id, username, full_name, 
     update.message.from_user.full_name = full_name
     context.args = args
 
-    await command_start_callback(update, context)
+    await BotHandlers().command_start_callback(update, context)
     update.message.reply_html.assert_called_with(render_to_string("command_start.html"))
     user = await TelegramUser.objects.aget(id=id)
     assert user.username == username

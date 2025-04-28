@@ -11,6 +11,7 @@ from app.internal.domain.schemas.auth import (
     MyTokenRefreshOutputSchema,
     RefreshPayloadSchema,
 )
+from app.internal.domain.services.user_service import UserService
 
 
 @api_controller(
@@ -18,6 +19,9 @@ from app.internal.domain.schemas.auth import (
     tags=["Auth"],
 )
 class Tokens:
+    def __init__(self):
+        self.user_service = UserService()
+
     @http_post(
         "/login/",
         response={
@@ -27,7 +31,7 @@ class Tokens:
     def login(self, payload: LoginPayloadSchema):
         id = payload.id
         try:
-            user = TelegramUser.objects.get(id=id)
+            user = self.user_service.get_user_by_id(id)
             refresh = RefreshToken.for_user(user)
             return HTTPStatus.OK, {
                 "refresh": str(refresh),
