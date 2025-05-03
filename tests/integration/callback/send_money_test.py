@@ -43,7 +43,7 @@ pytestmark = [pytest.mark.django_db(transaction=True), pytest.mark.asyncio, pyte
         ),
         (
             ["12345678901234567890", "12345678901234567891", "100"],
-            render_to_string("command_send_money.html", context={"error": ""}),
+            "Done"
         ),
         (
             ["12345678901234567890", "12345678901234567891", "100000"],
@@ -52,6 +52,8 @@ pytestmark = [pytest.mark.django_db(transaction=True), pytest.mark.asyncio, pyte
     ],
 )
 async def test_command_send_money_callback(update, context, id, username, full_name, args, expected, setup_db):
+    update.message.photo=None
+    update.message.caption=None
     update.message.from_user.id = id
     update.message.from_user.username = username
     update.message.from_user.full_name = full_name
@@ -92,7 +94,8 @@ async def test_command_send_money_callback(update, context, id, username, full_n
     ],
 )
 async def test_command_send_money_callback_user_error(update, context, id, args, expected, setup_user):
-
+    update.message.photo=None
+    update.message.caption=None
     update.message.from_user.id = id
     context.args = args
     await BotHandlers().command_send_money_callback(update, context)

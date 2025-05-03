@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import Optional
 
 from asgiref.sync import sync_to_async
 from django.db import transaction
@@ -44,14 +45,23 @@ class AccountService:
     def get_accounts(self) -> list[BankAccount]:
         return self.account_repo.get_accounts()
 
-    def save_transaction(self, from_account: BankAccount, to_account: BankAccount, amount_money: Decimal) -> None:
-        self.transaction_repo.save_transaction(from_account, to_account, amount_money)
+    def save_transaction(
+        self, from_account: BankAccount, to_account: BankAccount, amount_money: Decimal, photo_name: Optional[str] = None
+    ) -> None:
+        self.transaction_repo.save_transaction(from_account, to_account, amount_money, photo_name)
 
     def get_or_create_account(self, number: str, user_id: int, balance: Decimal) -> tuple((BankAccount, bool)):
         return self.account_repo.get_or_create_account(number, self.user_repo.get_user_by_id(user_id), balance)
 
     @sync_to_async
-    def send_money(self, payment_sender: str, payee: str, amount: str, message_sender: TelegramUser) -> None:
+    def send_money(
+        self,
+        payment_sender: str,
+        payee: str,
+        amount: str,
+        message_sender: TelegramUser,
+        photo_name: Optional[str] = None,
+    ) -> None:
         def get_obj(obj):
             if len(obj) == 16 and obj.isdigit():
                 response = self.get_account_by_card_number(obj)
@@ -75,4 +85,6 @@ class AccountService:
             payee.balance = F("balance") + amount
             payment_sender.save()
             payee.save()
-            self.save_transaction(from_account=payment_sender, to_account=payee, amount_money=amount)
+            self.save_transaction(
+                from_account=payment_sender, to_account=payee, amount_money=amount, photo_name=photo_name
+            )

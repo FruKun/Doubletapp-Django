@@ -60,9 +60,6 @@ def setup_admin():
 @pytest.fixture
 def update():
     update = AsyncMock()
-    update.message = AsyncMock()
-    update.message.from_user = AsyncMock()
-
     update.message.from_user.language_code = "RU"
     return update
 

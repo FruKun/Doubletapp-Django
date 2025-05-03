@@ -24,7 +24,7 @@ env = environ.Env(
     POSTGRES_HOST=(str, "localhost"),
     POSTGRES_PORT=(int, 5432),
 )
-env.read_env(os.path.join(BASE_DIR.parent, ".env"))
+env.read_env(os.path.join(BASE_DIR.parent, ".env.test"))
 TOKEN = env("BOT_SECRET_TOKEN")
 
 # Quick-start development settings - unsuitable for production
@@ -45,6 +45,13 @@ PORT = env("PORT")
 DOMAIN_URL = env("DOMAIN_URL")
 
 WEBHOOK_SECRET_TOKEN = env("WEBHOOK_SECRET_TOKEN")
+
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+
+S3_REGION = env("S3_REGION")
+S3_ENDPOINT = env("S3_ENDPOINT")
+S3_BUCKET = env("S3_BUCKET")
 
 # Application definition
 INSTALLED_APPS = [

@@ -1,7 +1,6 @@
 Transaction:
-  type: {% if self == history.from_account.number %}sent{%else%}accepted{%endif%}
+  type: accepted
   from: {{ history.from_account.number}}
   to: {{history.to_account.number}}
   amount money: {{history.amount_money}}
-  photo url: {{photo_url|safe}}
   {{history.created_at}}

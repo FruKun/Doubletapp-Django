@@ -28,7 +28,7 @@ class TransactionService:
         account = await self.get_account_by_number(account_number)
         if user != account.user:
             raise CustomErrors.Sender
-        return (await self.aget_transactions_by_account(account))[:5]
+        return await self.aget_transactions_by_account(account)
 
     async def all_usernames(self, user: TelegramUser) -> list[str]:
         account_list = await self.aget_usernames_by_user_id(user.id)
@@ -38,3 +38,15 @@ class TransactionService:
             uniq_usernames.add(account["transactionhistory_to__from_account__user__username"])
         uniq_usernames.remove(None)
         return uniq_usernames
+
+    async def unseen_receipts(self, user: TelegramUser) -> list[TransactionHistory]:
+        accounts = await self.account_repo.aget_accounts_by_user_id(user.id)
+        histories = []
+        for account in accounts:
+            extend = await self.transaction_repo.aget_unviewed_transactions_by_account(account)
+            histories.extend(extend)
+        return histories
+
+    async def amark_is_viewed(self, history: TransactionHistory):
+        history.is_viewed = True
+        await history.asave()
