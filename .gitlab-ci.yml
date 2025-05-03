@@ -12,6 +12,7 @@ test-job:
     - name: postgres:17.4
       alias: postgres
     - name: localstack/localstack:stable
+      alias: localstack
   script:
     - pip install --no-cache-dir poetry
     - poetry config virtualenvs.create false
