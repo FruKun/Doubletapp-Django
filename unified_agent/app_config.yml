@@ -8,7 +8,7 @@ channels:
         plugin: yc_metrics
         config:
           url: https://monitoring.api.cloud.yandex.net/monitoring/v2/data/write
-          folder_id: b1gp32p294a8feuf1g4v
+          folder_id: $FOLDER_ID
           iam:
             cloud_meta: {}
 routes:
