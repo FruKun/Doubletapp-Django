@@ -1,6 +1,7 @@
 status:
-  port: "16241"
+  port: 16241
   host: null
+
 agent_log:
   priority: NOTICE
 
@@ -22,22 +23,11 @@ channels:
         plugin: yc_metrics
         config:
           url: https://monitoring.api.cloud.yandex.net/monitoring/v2/data/write
-          folder_id: "$FOLDER_ID"
+          folder_id: b1gp32p294a8feuf1g4v
           iam:
-            jwt:
-              file: "/etc/yandex/unified_agent/jwt_params.json"
+            cloud_meta: {}
 
 routes:
-  - input:
-      plugin: metrics_pull
-      config:
-        url: http://158.160.167.78:9090/metrics
-        format:
-          prometheus: {}
-        namespace: app
-    channel:
-      channel_ref:
-        name: cloud_monitoring
   - input:
       plugin: linux_metrics
       config:
