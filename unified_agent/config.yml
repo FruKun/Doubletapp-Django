@@ -1,9 +1,5 @@
 status:
   port: 16241
-  host: null
-
-agent_log:
-  priority: NOTICE
 
 storages:
   - name: main
@@ -23,7 +19,7 @@ channels:
         plugin: yc_metrics
         config:
           url: https://monitoring.api.cloud.yandex.net/monitoring/v2/data/write
-          folder_id: $FOLDER_ID
+          folder_id: "b1gp32p294a8feuf1g4v"
           iam:
             cloud_meta: {}
 
