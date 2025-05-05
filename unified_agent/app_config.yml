@@ -1,3 +1,16 @@
+channels:
+  - name: cloud_monitoring
+    channel:
+      pipe:
+        - storage_ref:
+            name: main
+      output:
+        plugin: yc_metrics
+        config:
+          url: https://monitoring.api.cloud.yandex.net/monitoring/v2/data/write
+          folder_id: b1gp32p294a8feuf1g4v
+          iam:
+            cloud_meta: {}
 routes:
   - input:
       plugin: metrics_pull
