@@ -1,3 +1,4 @@
+import logging
 from decimal import Decimal
 from typing import Optional
 
@@ -18,6 +19,7 @@ class AccountService:
         self.user_repo = UserRepository()
         self.account_repo = AccountRepository()
         self.transaction_repo = TransactionHistoryRepository()
+        self.logger = logging.getLogger("root")
 
     def get_account_by_card_number(self, number: str) -> BankAccount:
         if account := self.account_repo.get_account_by_card_number(number):
@@ -46,7 +48,11 @@ class AccountService:
         return self.account_repo.get_accounts()
 
     def save_transaction(
-        self, from_account: BankAccount, to_account: BankAccount, amount_money: Decimal, photo_name: Optional[str] = None
+        self,
+        from_account: BankAccount,
+        to_account: BankAccount,
+        amount_money: Decimal,
+        photo_name: Optional[str] = None,
     ) -> None:
         self.transaction_repo.save_transaction(from_account, to_account, amount_money, photo_name)
 
@@ -85,6 +91,8 @@ class AccountService:
             payee.balance = F("balance") + amount
             payment_sender.save()
             payee.save()
+            self.logger.info(f"send money success. payment sender:{payment_sender} payee: {payee} amount: {amount}")
             self.save_transaction(
                 from_account=payment_sender, to_account=payee, amount_money=amount, photo_name=photo_name
             )
+            self.logger.info(f"created new transaction {payment_sender}, {payee}, {amount}, {photo_name}")

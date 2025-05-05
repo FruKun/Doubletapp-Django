@@ -40,7 +40,16 @@ services:
     volumes:
       - static:/src/static
       - media:/src/media
-
+  # ua:
+  #   build: unified_agent/.
+  #   ports:
+  #     - 16241:16241
+  #   volumes:
+  #     - /proc:/ua_proc
+  #     - ./agent_config.yml:/etc/yandex/unified_agent/config.yml
+  #     - ./jwt_params.json:/etc/yandex/unified_agent/jwt_params.json
+  #   environment:
+  #     PROC_DIRECTORY: /ua_proc
 volumes:
   postgres:
   static:

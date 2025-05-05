@@ -1,4 +1,5 @@
 import decimal
+import logging
 
 from botocore.exceptions import ClientError
 from django.conf import settings
@@ -25,6 +26,7 @@ class BotHandlers:
         self.card_service = CardService()
         self.transaction_service = TransactionService()
         self.s3_service = S3Service()
+        self.logger = logging.getLogger("root")
 
     async def command_start_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """/start"""
@@ -179,31 +181,60 @@ class BotHandlers:
                 photo_name = await self.s3_service.upload_image(
                     await (await update.message.photo[-1].get_file()).download_as_bytearray()
                 )
+                self.logger.debug(f"sending money with photo user: {user.id} photo_name: {photo_name} args: {caption}")
                 await self.account_service.send_money(caption[1], caption[2], caption[3], user, photo_name)
                 response = "Photo saved, transaction complete"
             else:
+                self.logger.debug(f"sending money user: {user.id} args: {context.args}")
                 await self.account_service.send_money(
                     context.args[0], context.args[1], context.args[2], user, photo_name
                 )
                 response = "Done"
         except IntegrityError:
             response = render_to_string("command_send_money.html", context={"error": "integrity"})
+            self.logger.warning(
+                f"IntegrityError user: {user.id}, caption:{update.message.caption}, args:{context.args}", exc_info=True
+            )
         except CustomErrors.InvalidFieldValue:
             response = render_to_string("command_send_money.html", context={"error": "object"})
+            self.logger.warning(
+                f"InvalidFieldValue user: {user.id}, caption:{update.message.caption}, args:{context.args}",
+                exc_info=True,
+            )
         except CustomErrors.Sender:
             response = render_to_string("command_send_money.html", context={"error": "sender"})
+            self.logger.warning(
+                f"Sender user: {user.id}, caption:{update.message.caption}, args:{context.args}", exc_info=True
+            )
         except (decimal.InvalidOperation, CustomErrors.AmountMoney):
             response = render_to_string("command_send_money.html", context={"error": "decimal"})
+            self.logger.warning(
+                f"InvalidOperation user: {user.id}, caption:{update.message.caption}, args:{context.args}",
+                exc_info=True,
+            )
         except IndexError:
             response = render_to_string("command_send_money.html", context={"error": "object"})
+            self.logger.warning(
+                f"IndexError user: {user.id}, caption:{update.message.caption}, args:{context.args}", exc_info=True
+            )
         except BankAccount.DoesNotExist:
             response = render_to_string("command_send_money.html", context={"error": "account"})
+            self.logger.warning(
+                f"BankAccount.DoesNotExist user: {user.id}, caption:{update.message.caption}, args:{context.args}",
+                exc_info=True,
+            )
         except ClientError:
             response = "cant save photo, try again or without him"
+            self.logger.warning(f"ClientError user: {user.id}, {photo_name}, {caption}", exc_info=True)
         except TelegramUser.DoesNotExist:
             response = render_to_string("register_error.html")
+            self.logger.warning(f"TelegramUser.DoesNotExist {update.message}, args:{context.args}", exc_info=True)
         except CustomErrors.PhoneError:
             response = render_to_string("phone_error.html")
+            self.logger.warning(f"PhoneError user: {user.id}", exc_info=True)
+        except Exception as e:
+            response = "unknown error"
+            self.logger.error(f"error: {e.args}\n update: {update}, context.args: {context.args}", exc_info=True)
         await update.message.reply_text(response)
 
     async def command_account_history_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
