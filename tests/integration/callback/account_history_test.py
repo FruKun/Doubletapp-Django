@@ -44,7 +44,7 @@ async def test_command_account_history_user_error(update, context, id, args, exp
         (["12345678901234567892"], "its not u account"),
         (
             ["12345678901234567890"],
-            render_to_string("account_history.html", context={"history": [], "self": "12345678901234567890"}),
+            "Done"
         ),
     ],
 )

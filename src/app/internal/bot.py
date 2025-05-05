@@ -33,6 +33,7 @@ async def post_init(application: Application) -> None:
             ("del_favorite", "del favorite choice"),
             ("send_money", "send money from u account to another"),
             ("account_history", "transaction history"),
+            ("unseen_receipt", "all unviewed transaction histories"),
             ("all_users", "all usernames"),
         ]
     )
@@ -51,7 +52,11 @@ def set_handlers(application: Application, botHandlers: BotHandlers) -> None:
     application.add_handler(CommandHandler("send_money", botHandlers.command_send_money_callback))
     # application.add_handler(CommandHandler("give_me_link", botHandlers.command_me_link_callback))
     application.add_handler(CommandHandler("account_history", botHandlers.command_account_history_callback))
+    application.add_handler(CommandHandler("unseen_receipt", botHandlers.command_unseen_receipt_callback))
     application.add_handler(CommandHandler("all_users", botHandlers.command_all_users_callback))
+    application.add_handler(
+        MessageHandler(filters.PHOTO & filters.CaptionRegex(r"^/send_money"), botHandlers.command_send_money_callback)
+    )
     application.add_handler(MessageHandler(filters.TEXT, botHandlers.message_callback))
 
 
