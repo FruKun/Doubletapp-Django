@@ -41,7 +41,7 @@ services:
       - static:/src/static
       - media:/src/media
   ua:
-    build: unified_agent/.
+    image: cr.yandex/yc/unified-agent:latest
     ports:
       - 16241:16241
     volumes:
