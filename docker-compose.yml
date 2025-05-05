@@ -41,15 +41,12 @@ services:
       - static:/src/static
       - media:/src/media
   ua:
-    image: cr.yandex/yc/unified-agent:latest
+    image: $IMAGE_UA
+    build: unified-agent/.
     ports:
       - 16241:16241
-    volumes:
-      - /proc:/ua_proc
-      - ./unified_agent/config.yml:/etc/yandex/unified_agent/config.yml
-      - ./unified_agent/app_config.yml:/etc/yandex/unified_agent/conf.d/app_config.yml
-    environment:
-      PROC_DIRECTORY: /ua_proc
+    env_file:
+      - .env
 volumes:
   postgres:
   static:
