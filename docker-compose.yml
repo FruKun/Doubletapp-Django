@@ -42,7 +42,7 @@ services:
       - media:/src/media
   ua:
     image: $IMAGE_UA
-    build: unified-agent/.
+    build: unified_agent/.
     ports:
       - 16241:16241
     env_file:
