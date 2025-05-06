@@ -57,12 +57,10 @@ build:
 push:
 	docker image push ${IMAGE_NGINX}
 	docker image push ${IMAGE_APP}
-	docker image push ${IMAGE_UA}
 
 pull:
 	docker image pull ${IMAGE_APP}
 	docker image pull ${IMAGE_NGINX}
-	docker image pull ${IMAGE_UA}
 
 up-build:
 	docker compose ${docker-file} up -d --build
