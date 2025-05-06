@@ -43,3 +43,9 @@ make down
 ```sh
 make logs
 ```
+
+### start yandex unified agent
+
+```sh
+docker run -it -p 16241:16241 --detach -v `pwd`/config.yml:/etc/yandex/unified_agent/conf.d/config.yml -e FOLDER_ID=$FOLDER_ID cr.yandex/yc/unified-agent
+```

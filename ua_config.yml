@@ -1,6 +1,6 @@
 status:
   port: 16241
-  host:
+  host: null
 routes:
   - input:
       plugin: metrics_pull

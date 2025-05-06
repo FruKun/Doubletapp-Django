@@ -42,13 +42,6 @@ services:
     volumes:
       - static:/src/static
       - media:/src/media
-  ua:
-    image: $IMAGE_UA
-    build: unified_agent/.
-    ports:
-      - 16241:16241
-    env_file:
-      - .env
 volumes:
   postgres:
   static:

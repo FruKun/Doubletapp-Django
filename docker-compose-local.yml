@@ -4,5 +4,4 @@ services:
       - "5432:5432"
   django-web: !reset null
   django-bot: !reset null
-  ua: !reset null
   nginx: !reset null
