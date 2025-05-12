@@ -11,3 +11,4 @@ data/
 /src/static/*
 .git/
 .pytest_cache/
+jwt_params.json

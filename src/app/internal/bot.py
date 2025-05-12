@@ -9,13 +9,8 @@ from telegram.ext import (
     filters,
 )
 
+from app.internal.metrics import start_thread_metrics
 from app.internal.presentation.bot.handlers import BotHandlers
-
-# Enable logging
-logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
-# set higher logging level for httpx to avoid all GET and POST requests being logged
-logging.getLogger("httpx").setLevel(logging.WARNING)
-logger = logging.getLogger(__name__)
 
 
 async def post_init(application: Application) -> None:
@@ -60,9 +55,13 @@ def set_handlers(application: Application, botHandlers: BotHandlers) -> None:
     application.add_handler(MessageHandler(filters.TEXT, botHandlers.message_callback))
 
 
+logging.getLogger("httpx")
+
+
 def run_bot() -> None:
     application = Application.builder().token(settings.TOKEN).post_init(post_init).build()
     set_handlers(application, BotHandlers())
+    start_thread_metrics()
     if settings.DEBUG:
         application.run_polling(allowed_updates=Update.ALL_TYPES)
     else:

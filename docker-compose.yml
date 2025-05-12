@@ -10,6 +10,7 @@ services:
     build: .
     expose:
       - $PORT
+      - 9090
     environment:
       POSTGRES_HOST: "postgres"
       POSTGRES_PORT: 5432
@@ -35,12 +36,12 @@ services:
     build: nginx/.
     ports:
       - 6000:80
+      - 9090:80
     env_file:
       - .env
     volumes:
       - static:/src/static
       - media:/src/media
-
 volumes:
   postgres:
   static:
