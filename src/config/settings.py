@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 import os
 from datetime import timedelta
+from logging.config import dictConfig
 from pathlib import Path
 
 import environ
@@ -171,3 +172,23 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "app.TelegramUser"
+
+LOG_CONF = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "stdformatter": {"format": "%(asctime)s - %(filename)s - %(levelname)s - %(message)s"},
+    },
+    "handlers": {
+        "stdhandler": {"class": "logging.StreamHandler", "formatter": "stdformatter", "stream": "ext://sys.stdout"},
+        "telegramhandler": {
+            "class": "app.internal.logs.TelegramHandler",
+            "formatter": "stdformatter",
+        },
+    },
+    "loggers": {
+        "root": {"handlers": ["stdhandler", "telegramhandler"], "level": "INFO", "propagate": True},
+        "httpx": {"handlers": ["stdhandler"], "level": "WARNING"},
+    },
+}
+dictConfig(LOG_CONF)

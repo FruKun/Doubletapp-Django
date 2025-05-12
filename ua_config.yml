@@ -1,0 +1,14 @@
+status:
+  port: 16241
+  host: null
+routes:
+  - input:
+      plugin: metrics_pull
+      config:
+        url: http://158.160.167.78:9090/metrics
+        format:
+          prometheus: {}
+        namespace: app
+    channel:
+      channel_ref:
+        name: cloud_monitoring
