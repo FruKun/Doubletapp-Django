@@ -12,6 +12,7 @@ from app.internal.db.repositories.account_repository import AccountRepository
 from app.internal.db.repositories.transaction_repository import TransactionHistoryRepository
 from app.internal.db.repositories.user_repository import UserRepository
 from app.internal.domain.services import CustomErrors
+from app.internal.metrics import LAST_TRANSFER
 
 
 class AccountService:
@@ -95,4 +96,5 @@ class AccountService:
             self.save_transaction(
                 from_account=payment_sender, to_account=payee, amount_money=amount, photo_name=photo_name
             )
+            LAST_TRANSFER.set(amount)
             self.logger.info(f"created new transaction {payment_sender}, {payee}, {amount}, {photo_name}")
