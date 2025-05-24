@@ -21,6 +21,6 @@ class Cards:
     @http_get("/{number}", response={HTTPStatus.OK: BankCardSchema})
     def get_card(self, number: str):
         try:
-            return HTTPStatus.OK, self.card_service.get_card_by_number(number)
+            return HTTPStatus.OK, BankCard.objects.get(number=number)
         except BankCard.DoesNotExist:
             raise error_handler.BankCardDoesNotExistException

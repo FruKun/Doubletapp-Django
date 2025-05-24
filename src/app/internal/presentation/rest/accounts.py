@@ -25,15 +25,16 @@ class Accounts:
     @http_get("/{number}", response={HTTPStatus.OK: BankAccountSchema})
     def get_account(self, number: str):
         try:
-            return HTTPStatus.OK, self.account_service.get_account_by_number(number)
+            return HTTPStatus.OK, BankAccount.objects.get(number=number)
         except BankAccount.DoesNotExist:
             raise error_handler.BankAccountDoesNotExistException
 
     @http_post("/", response={HTTPStatus.OK: MessageAccountSchema})
     def post_accounts(self, payload: PostBankAccountSchema):
         try:
-            account, created = self.account_service.get_or_create_account(
-                payload.number, payload.user_id, payload.balance
+            account, created = BankAccount.objects.get_or_create(
+                number=payload.number,
+                defaults={"user": TelegramUser.objects.get(id=payload.user_id), "balance": payload.balance},
             )
             if not created:
                 return HTTPStatus.OK, {"message": "account already exist", "number": account.number}

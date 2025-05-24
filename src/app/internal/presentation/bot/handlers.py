@@ -62,7 +62,7 @@ class BotHandlers:
     async def command_me_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """/me"""
         try:
-            user = await self.user_service.aget_user_by_id(update.message.from_user.id)
+            user = await TelegramUser.objects.aget(id=update.message.from_user.id)
             if not user.phone_number:
                 raise CustomErrors.PhoneError
             response = render_to_string(
@@ -79,7 +79,7 @@ class BotHandlers:
         """/give_me_link"""
         user_id = update.message.from_user.id
         try:
-            user = await self.user_service.aget_user_by_id(update.message.from_user.id)
+            user = await TelegramUser.objects.aget(id=update.message.from_user.id)
             if not user.phone_number:
                 raise CustomErrors.PhoneError
             response = f"https://{settings.DOMAIN_URL}/api/get_user?user_id={user_id}"
@@ -93,7 +93,7 @@ class BotHandlers:
     async def command_accounts_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """/accounts"""
         try:
-            user = await self.user_service.aget_user_by_id(update.message.from_user.id)
+            user = await TelegramUser.objects.aget(id=update.message.from_user.id)
             if not user.phone_number:
                 raise CustomErrors.PhoneError
             accounts = await self.account_service.aget_accounts_by_user(user)
@@ -107,7 +107,7 @@ class BotHandlers:
     async def command_cards_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """/cards"""
         try:
-            user = await self.user_service.aget_user_by_id(update.message.from_user.id)
+            user = await TelegramUser.objects.aget(id=update.message.from_user.id)
             if not user.phone_number:
                 raise CustomErrors.PhoneError
             account = await BankAccount.objects.prefetch_related("user").aget(number=context.args[0])
@@ -131,7 +131,7 @@ class BotHandlers:
     async def command_favourites_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """/favourites"""
         try:
-            user = await self.user_service.aget_user_by_id(update.message.from_user.id)
+            user = await TelegramUser.objects.aget(id=update.message.from_user.id)
             favourites = user.list_of_favourites
             response = render_to_string(
                 "command_favourites.html",
@@ -144,7 +144,7 @@ class BotHandlers:
     async def command_add_favorite_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """/add_favorite"""
         try:
-            user = await self.user_service.aget_user_by_id(update.message.from_user.id)
+            user = await TelegramUser.objects.aget(id=update.message.from_user.id)
             await self.user_service.add_favorite(user, context.args[0])
             response = "done"
         except TelegramUser.DoesNotExist:
@@ -160,7 +160,7 @@ class BotHandlers:
     async def command_del_favorite_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """/del_favorite"""
         try:
-            user = await self.user_service.aget_user_by_id(update.message.from_user.id)
+            user = await TelegramUser.objects.aget(id=update.message.from_user.id)
             await self.user_service.del_favorite(user, context.args[0])
             response = "done"
         except TelegramUser.DoesNotExist:
@@ -172,7 +172,7 @@ class BotHandlers:
     async def command_send_money_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """/send_money {payment_sender} {payee} {amount}"""
         try:
-            user = await self.user_service.aget_user_by_id(update.message.from_user.id)
+            user = await TelegramUser.objects.aget(id=update.message.from_user.id)
             photo_name = None
             if not user.phone_number:
                 raise CustomErrors.PhoneError
@@ -240,7 +240,7 @@ class BotHandlers:
     async def command_account_history_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """/account_history {account_number}"""
         try:
-            user = await self.user_service.aget_user_by_id(update.message.from_user.id)
+            user = await TelegramUser.objects.aget(id=update.message.from_user.id)
             if not user.phone_number:
                 raise CustomErrors.PhoneError
             history_list = await self.transaction_service.account_history(user, context.args[0])
@@ -280,7 +280,7 @@ class BotHandlers:
     async def command_unseen_receipt_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """/unviewed_history {account_number}"""
         try:
-            user = await self.user_service.aget_user_by_id(update.message.from_user.id)
+            user = await TelegramUser.objects.aget(id=update.message.from_user.id)
             if not user.phone_number:
                 raise CustomErrors.PhoneError
             history_list = await self.transaction_service.unseen_receipts(user)
@@ -309,7 +309,7 @@ class BotHandlers:
     async def command_all_users_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """/all_users"""
         try:
-            user = await self.user_service.aget_user_by_id(update.message.from_user.id)
+            user = await TelegramUser.objects.aget(id=update.message.from_user.id)
             if not user.phone_number:
                 raise CustomErrors.PhoneError
             user_list = await self.transaction_service.all_usernames(user)

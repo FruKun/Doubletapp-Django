@@ -47,7 +47,7 @@ check_lint:
 	black --check --config pyproject.toml .
 
 test:
-	pytest
+	pytest -n auto
 bot:
 	python3 src/manage.py run_bot
 

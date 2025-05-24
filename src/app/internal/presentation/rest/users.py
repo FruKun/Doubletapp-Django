@@ -31,14 +31,16 @@ class Users:
     @http_get("/{id}", response={HTTPStatus.OK: TelegramUserSchema})
     def get_user(self, id: int):
         try:
-            return HTTPStatus.OK, self.user_service.get_user_by_id(id)
+            return HTTPStatus.OK, TelegramUser.objects.get(id=id)
         except TelegramUser.DoesNotExist:
             raise error_handler.TelegramUserDoesNotExistException
 
     @http_post("/", response={HTTPStatus.OK: MessageUserSchema})
     def post_users(self, payload: PostTelegramUserSchema):
         try:
-            user, created = self.user_service.get_or_create_user(payload.id, payload.username, payload.full_name)
+            user, created = TelegramUser.objects.get_or_create(
+                id=payload.id, defaults={"username": payload.username, "full_name": payload.full_name}
+            )
             if not created:
                 return HTTPStatus.OK, {"message": "user already exist", "id": user.id, "username": user.username}
             return HTTPStatus.OK, {"message": "user created", "id": user.id, "username": user.username}

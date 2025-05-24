@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     "ninja_jwt",
     "ninja_jwt.token_blacklist",
     "app.apps.AppConfig",
+    "storages",
 ]
 
 MIDDLEWARE = [

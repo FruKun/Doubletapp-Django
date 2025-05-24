@@ -7,58 +7,31 @@ from django.db import transaction
 from django.db.models import F
 
 from app.internal.db.models.bank_data import BankAccount
+from app.internal.db.models.history_data import TransactionHistory
 from app.internal.db.models.user_data import TelegramUser
-from app.internal.db.repositories.account_repository import AccountRepository
-from app.internal.db.repositories.transaction_repository import TransactionHistoryRepository
-from app.internal.db.repositories.user_repository import UserRepository
 from app.internal.domain.services import CustomErrors
 from app.internal.metrics import LAST_TRANSFER
 
 
 class AccountService:
     def __init__(self):
-        self.user_repo = UserRepository()
-        self.account_repo = AccountRepository()
-        self.transaction_repo = TransactionHistoryRepository()
         self.logger = logging.getLogger("root")
 
-    def get_account_by_card_number(self, number: str) -> BankAccount:
-        if account := self.account_repo.get_account_by_card_number(number):
-            return account
-        raise BankAccount.DoesNotExist
-
-    def get_account_by_number(self, number: str) -> BankAccount:
-        if account := self.account_repo.get_account_by_number(number):
-            return account
-        raise BankAccount.DoesNotExist
-
     def get_account_by_user_id(self, id: int) -> BankAccount:
-        if account := self.account_repo.get_account_by_user_id(id):
+        if account := BankAccount.objects.select_related("user").filter(user=id).first():
             return account
         raise BankAccount.DoesNotExist
 
     def get_account_by_user_username(self, username: str) -> BankAccount:
-        if account := self.account_repo.get_account_by_user_username(username):
+        if account := BankAccount.objects.select_related("user").filter(user__username=username).first():
             return account
         raise BankAccount.DoesNotExist
 
-    async def aget_accounts_by_user(self, user: TelegramUser) -> list[BankAccount]:
-        return await self.account_repo.aget_accounts_by_user_id(user.id)
+    async def aget_accounts_by_user(self, user: TelegramUser, start: int = 0, end: int = 10) -> list[BankAccount]:
+        return [i async for i in BankAccount.objects.select_related("user").filter(user=user)[start:end]]
 
     def get_accounts(self) -> list[BankAccount]:
-        return self.account_repo.get_accounts()
-
-    def save_transaction(
-        self,
-        from_account: BankAccount,
-        to_account: BankAccount,
-        amount_money: Decimal,
-        photo_name: Optional[str] = None,
-    ) -> None:
-        self.transaction_repo.save_transaction(from_account, to_account, amount_money, photo_name)
-
-    def get_or_create_account(self, number: str, user_id: int, balance: Decimal) -> tuple((BankAccount, bool)):
-        return self.account_repo.get_or_create_account(number, self.user_repo.get_user_by_id(user_id), balance)
+        return [i for i in BankAccount.objects.select_related("user").all()]
 
     @sync_to_async
     def send_money(
@@ -71,9 +44,9 @@ class AccountService:
     ) -> None:
         def get_obj(obj):
             if len(obj) == 16 and obj.isdigit():
-                response = self.get_account_by_card_number(obj)
+                response = BankAccount.objects.select_related("user").get(bankcard=obj)
             elif len(obj) == 20 and obj.isdigit():
-                response = self.get_account_by_number(obj)
+                response = BankAccount.objects.select_related("user").get(number=obj)
             elif obj.isdigit():
                 response = self.get_account_by_user_id(int(obj))
             else:
@@ -92,9 +65,9 @@ class AccountService:
             payee.balance = F("balance") + amount
             payment_sender.save()
             payee.save()
-            self.logger.info(f"send money success. payment sender:{payment_sender} payee: {payee} amount: {amount}")
-            self.save_transaction(
+            TransactionHistory.objects.create(
                 from_account=payment_sender, to_account=payee, amount_money=amount, photo_name=photo_name
             )
-            LAST_TRANSFER.set(amount)
+            self.logger.info(f"send money success. payment sender:{payment_sender} payee: {payee} amount: {amount}")
             self.logger.info(f"created new transaction {payment_sender}, {payee}, {amount}, {photo_name}")
+            LAST_TRANSFER.set(amount)
