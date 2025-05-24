@@ -3,6 +3,7 @@ from decimal import Decimal
 from typing import Optional
 
 from asgiref.sync import sync_to_async
+from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models import F
 
@@ -40,7 +41,7 @@ class AccountService:
         payee: str,
         amount: str,
         message_sender: TelegramUser,
-        photo_name: Optional[str] = None,
+        photo: Optional[ContentFile] = None,
     ) -> None:
         def get_obj(obj):
             if len(obj) == 16 and obj.isdigit():
@@ -66,8 +67,8 @@ class AccountService:
             payment_sender.save()
             payee.save()
             TransactionHistory.objects.create(
-                from_account=payment_sender, to_account=payee, amount_money=amount, photo_name=photo_name
+                from_account=payment_sender, to_account=payee, amount_money=amount, photo=photo
             )
             self.logger.info(f"send money success. payment sender:{payment_sender} payee: {payee} amount: {amount}")
-            self.logger.info(f"created new transaction {payment_sender}, {payee}, {amount}, {photo_name}")
+            self.logger.info(f"created new transaction {payment_sender}, {payee}, {amount}, {photo}")
             LAST_TRANSFER.set(amount)

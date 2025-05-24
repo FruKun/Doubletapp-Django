@@ -1,8 +1,10 @@
 import decimal
 import logging
+import uuid
 
 from botocore.exceptions import ClientError
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.db.utils import IntegrityError
 from django.template.loader import render_to_string
 from phonenumbers import NumberParseException
@@ -173,22 +175,18 @@ class BotHandlers:
         """/send_money {payment_sender} {payee} {amount}"""
         try:
             user = await TelegramUser.objects.aget(id=update.message.from_user.id)
-            photo_name = None
             if not user.phone_number:
                 raise CustomErrors.PhoneError
             if update.message.photo and update.message.caption:
                 caption = update.message.caption.split(" ")
-                photo_name = await self.s3_service.upload_image(
-                    await (await update.message.photo[-1].get_file()).download_as_bytearray()
-                )
-                self.logger.debug(f"sending money with photo user: {user.id} photo_name: {photo_name} args: {caption}")
-                await self.account_service.send_money(caption[1], caption[2], caption[3], user, photo_name)
+                photo = ContentFile(await (await update.message.photo[-1].get_file()).download_as_bytearray())
+                photo.name = f"{uuid.uuid4()}.png"
+                self.logger.debug(f"sending money with photo: user: {user.id} photo_name: {photo.name} args: {caption}")
+                await self.account_service.send_money(caption[1], caption[2], caption[3], user, photo)
                 response = "Photo saved, transaction complete"
             else:
                 self.logger.debug(f"sending money user: {user.id} args: {context.args}")
-                await self.account_service.send_money(
-                    context.args[0], context.args[1], context.args[2], user, photo_name
-                )
+                await self.account_service.send_money(context.args[0], context.args[1], context.args[2], user)
                 response = "Done"
         except IntegrityError:
             response = render_to_string("command_send_money.html", context={"error": "integrity"})
@@ -225,7 +223,7 @@ class BotHandlers:
             )
         except ClientError:
             response = "cant save photo, try again or without him"
-            self.logger.warning(f"ClientError user: {user.id}, {photo_name}, {caption}", exc_info=True)
+            self.logger.warning(f"ClientError user: {user.id}, {photo.name}, {caption}", exc_info=True)
         except TelegramUser.DoesNotExist:
             response = render_to_string("register_error.html")
             self.logger.warning(f"TelegramUser.DoesNotExist {update.message}, args:{context.args}", exc_info=True)
@@ -245,8 +243,8 @@ class BotHandlers:
                 raise CustomErrors.PhoneError
             history_list = await self.transaction_service.account_history(user, context.args[0])
             for history in history_list:
-                if history.photo_name:
-                    photo_url = await self.s3_service.create_presigned_url(history.photo_name, 3600)
+                if history.photo:
+                    photo_url = await self.s3_service.create_presigned_url(history.photo.name, 3600)
                     await update.message.reply_text(
                         render_to_string(
                             "account_history.html",
@@ -286,9 +284,9 @@ class BotHandlers:
             history_list = await self.transaction_service.unseen_receipts(user)
             for history in history_list:
                 await self.transaction_service.amark_is_viewed(history)
-                if history.photo_name:
+                if history.photo:
                     await update.message.reply_photo(
-                        photo=await self.s3_service.create_presigned_url(history.photo_name, 3600),
+                        photo=await self.s3_service.create_presigned_url(history.photo.name, 3600),
                         caption=render_to_string("unseen_receipt.html", context={"history": history}),
                     )
                 else:

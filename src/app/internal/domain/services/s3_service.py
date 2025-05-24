@@ -17,11 +17,6 @@ class S3Service:
             config=Config(signature_version="s3v4"),
         )
 
-    async def upload_image(self, file: bytearray) -> str:
-        file_id = f"{uuid4()}.png"
-        self.client.put_object(Bucket=settings.S3_BUCKET, Key=file_id, Body=BytesIO(file))
-        return file_id
-
     async def create_presigned_url(self, object_name: str, expiration: int = 3600) -> str:
         return self.client.generate_presigned_url(
             "get_object",
