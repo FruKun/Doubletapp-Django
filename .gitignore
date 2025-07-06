@@ -13,3 +13,4 @@ data/
 .pytest_cache/
 jwt_params.json
 local_ua_config.yml
+.python-version

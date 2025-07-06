@@ -4,11 +4,11 @@ services:
     ports:
       - 5432:5432
     env_file:
-      - .env.test
+      - .env
   localstack:
     image: localstack/localstack:stable
     ports:
       - 4566:4566
       - 4510-4559:4510-4559
     env_file:
-      - .env.test
+      - .env

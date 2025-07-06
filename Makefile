@@ -73,3 +73,7 @@ down:
 
 logs:
 	docker compose ${docker-file} logs
+
+init-migrate:
+	python src/manage.py migrate app
+	python src/manage.py migrate

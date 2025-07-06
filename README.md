@@ -7,7 +7,26 @@ poetry install --no-root
 ```
 
 ### create .env
+```sh
+cp env.example .env
+```
 
+### edit environment
+```sh
+ENVIRONMENT= # can be prod, test, local
+```
+### start docker
+```sh
+make up
+```
+### migrate
+```sh
+make init-migrate
+```
+### tests
+```sh
+make test
+```
 ### create super user
 
 ```sh
@@ -24,12 +43,6 @@ make dev
 
 ```sh
 make bot
-```
-
-### start docker
-
-```sh
-make up
 ```
 
 ### down docker
