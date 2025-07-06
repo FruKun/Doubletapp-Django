@@ -1,5 +1,7 @@
 # Template for backend course
-
+[source rutube](https://rutube.ru/plst/799817/)  
+[source youtube](https://youtube.com/playlist?list=PLrHK_KyUvYLNYjsUYbZ0n0VzT5djU3vfK&si=2BZ8h0AeL-45AQ6s)  
+[gitlab link](https://gitlab.com/frukun1/doubletapp-django)
 ### install dependencies
 
 ```sh
